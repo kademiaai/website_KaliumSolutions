@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
-import { DiagnosticsCluster } from './components/DiagnosticsCluster';
-import { NodeMatrix } from './components/NodeMatrix';
-import { ScopingSection } from './components/ScopingSection';
+import { SolutionsSection } from './components/SolutionsSection';
+import { MethodologySection } from './components/MethodologySection';
+import { EmpiricalResultsSection } from './components/EmpiricalResultsSection';
+import { TestimonialSection } from './components/TestimonialSection';
+import { ClientsSection } from './components/ClientsSection';
+import { InsightsSection } from './components/InsightsSection';
+import { ContactSection } from './components/ContactSection';
 import { CapabilitiesPage } from './components/CapabilitiesPage';
 import { CockpitModal } from './components/CockpitModal';
 import { Footer } from './components/Footer';
 
 export default function App() {
-  const [isCockpitOpen, setIsCockpitOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState<'overview' | 'capabilities'>('overview');
+  const [activeSection, setActiveSection] = useState<string>('solutions');
+  const [isCockpitOpen, setIsCockpitOpen] = useState<boolean>(false);
 
   // Sync state with URL hash
   useEffect(() => {
@@ -23,6 +28,7 @@ export default function App() {
         setCurrentPage('overview');
         if (hash && hash !== '#') {
           const targetId = hash.replace('#', '');
+          setActiveSection(targetId);
           setTimeout(() => {
             const el = document.getElementById(targetId);
             if (el) {
@@ -38,6 +44,30 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
+  // Track active section for navigation highlight
+  useEffect(() => {
+    if (currentPage !== 'overview') return;
+
+    const sectionIds = ['solutions', 'industrial-grid', 'clients-and-partners', 'insights', 'contact'];
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 250;
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPosition >= top && scrollPosition < top + height) {
+            setActiveSection(id);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [currentPage]);
+
   const handleNavigate = (page: 'overview' | 'capabilities', sectionId?: string) => {
     if (page === 'capabilities') {
       setCurrentPage('capabilities');
@@ -47,12 +77,13 @@ export default function App() {
       setCurrentPage('overview');
       if (sectionId) {
         window.location.hash = `#${sectionId}`;
+        setActiveSection(sectionId);
         setTimeout(() => {
           const el = document.getElementById(sectionId);
           if (el) {
             el.scrollIntoView({ behavior: 'smooth' });
           }
-        }, 80);
+        }, 60);
       } else {
         window.location.hash = '#';
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -60,56 +91,56 @@ export default function App() {
     }
   };
 
-  // Keyboard shortcut listener for ⌘K / Ctrl+K
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        if (currentPage !== 'overview') {
-          handleNavigate('overview', 'matrix');
-        }
-        setTimeout(() => {
-          const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement | null;
-          if (searchInput) {
-            searchInput.focus();
-          }
-        }, 150);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentPage]);
-
   return (
-    <div className="min-h-screen bg-[#051424] text-[#d4e4fa] font-['Geist'] selection:bg-primary/20 selection:text-primary relative overflow-x-hidden">
-      {/* Background radial glowing gradients matching design */}
-      <div className="fixed top-0 left-1/4 w-[600px] h-[500px] bg-primary/5 rounded-full blur-[140px] pointer-events-none -z-0"></div>
-      <div className="fixed top-1/3 right-10 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[160px] pointer-events-none -z-0"></div>
-      <div className="fixed bottom-20 left-10 w-[700px] h-[600px] bg-primary-container/5 rounded-full blur-[180px] pointer-events-none -z-0"></div>
-
-      {/* Global Navigation Header */}
+    <div className="min-h-screen bg-surface-container-lowest text-on-surface font-body selection:bg-secondary/20 selection:text-secondary relative overflow-x-hidden">
+      {/* Top Header */}
       <Header
         currentPage={currentPage}
+        activeSection={activeSection}
         onNavigate={handleNavigate}
-        onOpenCockpit={() => setIsCockpitOpen(true)}
+        onOpenConsultation={() => handleNavigate('overview', 'contact')}
       />
 
       {/* Main Content Area */}
-      <main className="pt-20">
+      <main className="w-full">
         {currentPage === 'overview' ? (
           <>
+            {/* Section 1: Hero Section */}
             <HeroSection
-              onOpenCockpit={() => setIsCockpitOpen(true)}
+              onNavigateSolutions={() => handleNavigate('overview', 'solutions')}
+              onNavigateCaseStudies={() => handleNavigate('overview', 'insights')}
               onNavigateCapabilities={() => handleNavigate('capabilities')}
             />
-            <DiagnosticsCluster onOpenCockpit={() => setIsCockpitOpen(true)} />
-            <NodeMatrix />
-            <ScopingSection />
+
+            {/* Section 2: Core Offerings / Solutions */}
+            <SolutionsSection
+              onNavigateCapabilities={() => handleNavigate('capabilities')}
+            />
+
+            {/* Section 3: Engineering Methodology */}
+            <MethodologySection />
+
+            {/* Section 4: Empirical Industrial Grid */}
+            <EmpiricalResultsSection />
+
+            {/* Section 5: Operator & Director Testimonial */}
+            <TestimonialSection />
+
+            {/* Section 6: World-Class Manufacturing Clients & Partners */}
+            <ClientsSection
+              onContactClick={() => handleNavigate('overview', 'contact')}
+            />
+
+            {/* Section 7: Technical Insights & Architecture Guides */}
+            <InsightsSection />
+
+            {/* Section 8: Immediate Engagement / Plant Architecture Audit */}
+            <ContactSection />
           </>
         ) : (
-          <div id="capabilities">
+          <div id="capabilities" className="pt-24">
             <CapabilitiesPage
-              onScheduleScoping={() => handleNavigate('overview', 'consultation')}
+              onScheduleScoping={() => handleNavigate('overview', 'contact')}
             />
           </div>
         )}

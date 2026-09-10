@@ -5,123 +5,200 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
-  const handleNav = (page: 'overview' | 'capabilities', sectionId?: string) => {
+  const handleNav = (
+    e: React.MouseEvent,
+    page: 'overview' | 'capabilities',
+    sectionId?: string
+  ) => {
+    e.preventDefault();
     if (onNavigate) {
       onNavigate(page, sectionId);
     }
   };
 
   return (
-    <footer className="w-full bg-surface-container-lowest mt-16 border-t border-outline-variant/20">
-      <div className="max-w-[1440px] mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
-          {/* Brand Info */}
-          <div className="lg:col-span-2 flex flex-col gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
-                <span className="material-symbols-outlined text-[18px]">hub</span>
-              </div>
-              <span className="font-['Space_Grotesk'] text-lg font-bold text-on-surface tracking-tight">
+    <footer className="w-full bg-surface-container-lowest border-t border-surface-container py-space-3xl">
+      <div className="max-w-container-max mx-auto px-gutter-mobile lg:px-gutter-desktop">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-space-2xl pb-space-3xl border-b border-surface-container">
+          {/* Col 1: Brand & Identity */}
+          <div className="md:col-span-1">
+            <div className="flex items-center gap-space-sm mb-space-md">
+              <img
+                alt="Kalium Solutions"
+                className="h-7 w-auto"
+                src="https://lh3.googleusercontent.com/aida/AEtjO1VR4zWWnWLMCorYm1D3P8toYE_I72RDxuguKt6OeDEYfunUtYP69cZQsFCLcnY6yvbEeGr90-JEqAEKO1XNeTz7BYHlw7PO5slxeChwo1pThI1qw4EzIL36N6xgM8Xy9MXspIsYcI0zrcf6a35patfufWjN4zC-eGH-m-HIUl6JUTxCofX0k0IMMhBk3nW9nypCwSvMQmFkiDBHScmMY24qMxuXBGLNnLT72km_UwX7FN4Lbb4fixLqYWA"
+              />
+              <span className="font-headline-sm text-headline-sm text-on-surface tracking-tight">
                 Kalium Solutions
               </span>
             </div>
-            <p className="font-['Geist'] text-sm text-on-surface-variant max-w-sm leading-relaxed">
-              Precision telemetry and cloud orchestrations designed for hyper-scale engineering teams and sovereign computational backbones.
+            <p className="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              Architecting deterministic industrial telemetry, predictive machine intelligence, and agile digital transformation frameworks for global discrete and process enterprises.
             </p>
-            <div className="flex items-center gap-2 pt-2">
-              <span className="inline-block w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-              <span className="font-['JetBrains_Mono'] text-xs text-primary uppercase">
-                Global Edge Clusters: Active &amp; Synchronized
-              </span>
+          </div>
+
+          {/* Col 2: Solutions */}
+          <div>
+            <h4 className="font-headline-sm text-[14px] text-on-surface font-bold uppercase tracking-wider mb-space-md">
+              Solutions
+            </h4>
+            <ul className="flex flex-col gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
+              <li>
+                <a
+                  className="hover:text-secondary transition-colors cursor-pointer"
+                  href="#solutions"
+                  onClick={(e) => handleNav(e, 'overview', 'solutions')}
+                >
+                  Edge IIoT Telemetry
+                </a>
+              </li>
+              <li>
+                <a
+                  className="hover:text-secondary transition-colors cursor-pointer"
+                  href="#solutions"
+                  onClick={(e) => handleNav(e, 'overview', 'solutions')}
+                >
+                  Predictive Maintenance
+                </a>
+              </li>
+              <li>
+                <a
+                  className="hover:text-secondary transition-colors cursor-pointer"
+                  href="#solutions"
+                  onClick={(e) => handleNav(e, 'overview', 'solutions')}
+                >
+                  PowerPlatform Workflows
+                </a>
+              </li>
+              <li>
+                <a
+                  className="hover:text-secondary transition-colors cursor-pointer"
+                  href="#solutions"
+                  onClick={(e) => handleNav(e, 'overview', 'solutions')}
+                >
+                  Smart Factory OEE
+                </a>
+              </li>
+              <li>
+                <a
+                  className="hover:text-secondary transition-colors cursor-pointer"
+                  href="#solutions"
+                  onClick={(e) => handleNav(e, 'overview', 'solutions')}
+                >
+                  Zero-Trust OT/IT Cloud
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Col 3: Company & Governance */}
+          <div>
+            <h4 className="font-headline-sm text-[14px] text-on-surface font-bold uppercase tracking-wider mb-space-md">
+              Company
+            </h4>
+            <ul className="flex flex-col gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
+              <li>
+                <a
+                  className="hover:text-secondary transition-colors cursor-pointer"
+                  href="#capabilities"
+                  onClick={(e) => handleNav(e, 'capabilities')}
+                >
+                  Engineering Capabilities
+                </a>
+              </li>
+              <li>
+                <a
+                  className="hover:text-secondary transition-colors cursor-pointer"
+                  href="#clients-and-partners"
+                  onClick={(e) => handleNav(e, 'overview', 'clients-and-partners')}
+                >
+                  Partners &amp; Clients
+                </a>
+              </li>
+              <li>
+                <a
+                  className="hover:text-secondary transition-colors cursor-pointer"
+                  href="#insights"
+                  onClick={(e) => handleNav(e, 'overview', 'insights')}
+                >
+                  Case Studies &amp; Insights
+                </a>
+              </li>
+              <li>
+                <a
+                  className="hover:text-secondary transition-colors cursor-pointer"
+                  href="#contact"
+                  onClick={(e) => handleNav(e, 'overview', 'contact')}
+                >
+                  Plant Maturity Audits
+                </a>
+              </li>
+              <li>
+                <a
+                  className="hover:text-secondary transition-colors cursor-pointer"
+                  href="#contact"
+                  onClick={(e) => handleNav(e, 'overview', 'contact')}
+                >
+                  Careers &amp; EPC Support
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Col 4: Contact & Operations */}
+          <div>
+            <h4 className="font-headline-sm text-[14px] text-on-surface font-bold uppercase tracking-wider mb-space-md">
+              Operations
+            </h4>
+            <div className="flex flex-col gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
+              <div className="flex items-center gap-space-xs">
+                <span className="material-symbols-outlined text-secondary text-[16px]">
+                  location_on
+                </span>
+                <span>Vietnam • Southeast Asia • EU Operations</span>
+              </div>
+              <div className="flex items-center gap-space-xs">
+                <span className="material-symbols-outlined text-primary text-[16px]">mail</span>
+                <span>contact@kaliumsolutions.com</span>
+              </div>
+              <div className="flex items-center gap-space-xs mt-space-sm">
+                <span className="w-2 h-2 rounded-full bg-secondary"></span>
+                <span className="font-label-code text-label-code text-on-surface">
+                  ISO-95 / IEC-62443 COMPLIANT
+                </span>
+              </div>
             </div>
-          </div>
-
-          {/* Architecture Links */}
-          <div>
-            <h4 className="font-['Space_Grotesk'] text-sm text-on-surface font-semibold mb-4">
-              Architecture &amp; Capabilities
-            </h4>
-            <ul className="flex flex-col gap-2.5">
-              {[
-                { label: 'Core Capabilities', page: 'capabilities' as const, section: '' },
-                { label: 'PINN RUL Prognostics', page: 'capabilities' as const, section: '' },
-                { label: 'Unified Namespace (UNS)', page: 'capabilities' as const, section: '' },
-                { label: 'OT/IT Cybersecurity', page: 'capabilities' as const, section: '' },
-                { label: 'Telemetry Mesh', page: 'overview' as const, section: 'solutions' },
-              ].map((item) => (
-                <li key={item.label}>
-                  <button
-                    type="button"
-                    onClick={() => handleNav(item.page, item.section)}
-                    className="font-['Geist'] text-xs text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer text-left"
-                  >
-                    {item.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Governance Links */}
-          <div>
-            <h4 className="font-['Space_Grotesk'] text-sm text-on-surface font-semibold mb-4">
-              Governance
-            </h4>
-            <ul className="flex flex-col gap-2.5">
-              {['Compliance Registry', 'SOC2 Type II Audit', 'ISO/IEC 27001 Certified', 'Privacy Safeguards'].map((item) => (
-                <li key={item}>
-                  <button
-                    type="button"
-                    onClick={() => handleNav('overview', 'solutions')}
-                    className="font-['Geist'] text-xs text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer text-left"
-                  >
-                    {item}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Connectivity Links */}
-          <div>
-            <h4 className="font-['Space_Grotesk'] text-sm text-on-surface font-semibold mb-4">
-              Connectivity
-            </h4>
-            <ul className="flex flex-col gap-2.5">
-              {[
-                { label: 'Global Gateway API', page: 'overview' as const, section: 'matrix' },
-                { label: 'Status Monitor', page: 'overview' as const, section: 'matrix' },
-                { label: 'Schedule Workshop', page: 'overview' as const, section: 'consultation' },
-                { label: 'Developer Sandbox', page: 'overview' as const, section: 'solutions' },
-              ].map((item) => (
-                <li key={item.label}>
-                  <button
-                    type="button"
-                    onClick={() => handleNav(item.page, item.section)}
-                    className="font-['Geist'] text-xs text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer text-left"
-                  >
-                    {item.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-8 border-t border-outline-variant/10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-3 font-['JetBrains_Mono'] text-xs text-on-surface-variant">
-            <span className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-[16px] text-primary">verified_user</span>
-              <span>NIST SP 800-53 Compliant</span>
-            </span>
-            <span className="hidden sm:inline opacity-40">•</span>
-            <span>Hardware Security Module (HSM) Level 4</span>
+        {/* Bottom Row */}
+        <div className="flex flex-wrap items-center justify-between pt-space-xl gap-space-md font-body-sm text-body-sm text-on-surface-variant">
+          <div>
+            © 2024 Kalium Solutions Co., Ltd. All rights reserved. Precision engineering for modern manufacturing.
           </div>
-
-          <p className="font-['Geist'] text-xs text-on-surface-variant">
-            © 2025 Kalium Solutions (kaliumsolutions.tech). All rights reserved.
-          </p>
+          <div className="flex items-center gap-space-lg font-label-code text-label-code">
+            <a
+              className="hover:text-on-surface cursor-pointer"
+              href="#contact"
+              onClick={(e) => handleNav(e, 'overview', 'contact')}
+            >
+              PRIVACY POLICY
+            </a>
+            <a
+              className="hover:text-on-surface cursor-pointer"
+              href="#contact"
+              onClick={(e) => handleNav(e, 'overview', 'contact')}
+            >
+              TERMS OF SERVICE
+            </a>
+            <a
+              className="hover:text-on-surface cursor-pointer"
+              href="#contact"
+              onClick={(e) => handleNav(e, 'overview', 'contact')}
+            >
+              SECURITY ARCHITECTURE
+            </a>
+          </div>
         </div>
       </div>
     </footer>
