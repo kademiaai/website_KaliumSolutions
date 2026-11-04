@@ -39,9 +39,12 @@ export const Header: React.FC<HeaderProps> = ({
           className="flex items-center gap-space-sm cursor-pointer group text-left"
         >
           <img
-            alt="Kalium Solutions Logo"
+            alt=""
+            aria-hidden="true"
+            width={32}
+            height={32}
             className="h-8 w-auto object-contain transition-transform group-hover:scale-105"
-            src="https://lh3.googleusercontent.com/aida/AEtjO1VR4zWWnWLMCorYm1D3P8toYE_I72RDxuguKt6OeDEYfunUtYP69cZQsFCLcnY6yvbEeGr90-JEqAEKO1XNeTz7BYHlw7PO5slxeChwo1pThI1qw4EzIL36N6xgM8Xy9MXspIsYcI0zrcf6a35patfufWjN4zC-eGH-m-HIUl6JUTxCofX0k0IMMhBk3nW9nypCwSvMQmFkiDBHScmMY24qMxuXBGLNnLT72km_UwX7FN4Lbb4fixLqYWA"
+            src="/logo.svg"
           />
           <span className="font-headline-sm text-headline-sm text-on-surface tracking-tight group-hover:text-primary transition-colors">
             Kalium Solutions

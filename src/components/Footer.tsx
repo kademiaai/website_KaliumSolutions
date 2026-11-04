@@ -24,10 +24,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <div className="md:col-span-1">
             <div className="flex items-center gap-space-sm mb-space-md">
               <img
-                alt="Kalium Solutions"
-                className="h-7 w-auto"
-                src="https://lh3.googleusercontent.com/aida/AEtjO1VR4zWWnWLMCorYm1D3P8toYE_I72RDxuguKt6OeDEYfunUtYP69cZQsFCLcnY6yvbEeGr90-JEqAEKO1XNeTz7BYHlw7PO5slxeChwo1pThI1qw4EzIL36N6xgM8Xy9MXspIsYcI0zrcf6a35patfufWjN4zC-eGH-m-HIUl6JUTxCofX0k0IMMhBk3nW9nypCwSvMQmFkiDBHScmMY24qMxuXBGLNnLT72km_UwX7FN4Lbb4fixLqYWA"
-              />
+            alt=""
+            aria-hidden="true"
+            width={32}
+            height={32}
+            className="h-7 w-auto"
+            src="/logo.svg"
+          />
               <span className="font-headline-sm text-headline-sm text-on-surface tracking-tight">
                 Kalium Solutions
               </span>

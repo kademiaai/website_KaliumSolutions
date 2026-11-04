@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Kalium Solutions">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffb690"/>
+      <stop offset="1" stop-color="#f97316"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#g)"/>
+  <g fill="none" stroke="#0f131d" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 15v34"/>
+    <path d="M44 15L27 33l17 16"/>
+  </g>
+  <circle cx="49" cy="49" r="4" fill="#4cd7f6"/>
+</svg>
