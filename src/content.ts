@@ -2,7 +2,7 @@
 // Facts on this page come from the existing kaliumsolutions.tech site. Do not add statistics,
 // client names or testimonials unless they are verified.
 
-export const CONTACT_EMAIL = 'contact@kaliumsolutions.com';
+export const CONTACT_EMAIL = 'hello@kademia.edu.vn';
 
 export const NAV_LINKS = [
   { id: 'architecture', label: 'Architecture' },

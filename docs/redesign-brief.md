@@ -102,8 +102,8 @@ Full answers live in `src/content.ts`. Please check every answer against how you
 
 - **Proof:** supply real client logos (with permission), a named testimonial, or one verified result figure.
   The page has no social proof section until then.
-- **Contact address:** the site uses `contact@kaliumsolutions.com` but the domain is `kaliumsolutions.tech`.
-  Confirm which mailbox is real (one constant in `src/content.ts`).
+- **Contact address:** resolved. Requests go to `hello@kademia.edu.vn` (Kademia is the parent company);
+  the footer says "A Kademia company" so the different domain is not a surprise.
 - **Form backend:** the form currently opens the visitor's email app with the request filled in.
   Connect a form service (Formspree, Netlify Forms, a small API) to receive requests directly.
 - **Legal pages:** privacy policy and terms are not written yet; the footer links are omitted until they exist.

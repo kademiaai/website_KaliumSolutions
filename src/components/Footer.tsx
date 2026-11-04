@@ -48,9 +48,12 @@ export const Footer: React.FC = () => (
         </div>
       </div>
 
-      <p className="caption-5 text-fg-faint">
-        © {new Date().getFullYear()} Kalium Solutions Co., Ltd. All rights reserved.
-      </p>
+      <div className="flex flex-col gap-2 sm:flex-row sm:justify-between">
+        <p className="caption-5 text-fg-faint">
+          © {new Date().getFullYear()} Kalium Solutions Co., Ltd. All rights reserved.
+        </p>
+        <p className="caption-5 text-fg-faint">A Kademia company</p>
+      </div>
     </Container>
   </footer>
 );
