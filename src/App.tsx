@@ -8,6 +8,8 @@ import { UseCases, HowItWorks } from './components/UseCases';
 import { Faq } from './components/Faq';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
+import { MotionBand } from './components/MotionBand';
+import { FloatingActions } from './components/FloatingActions';
 
 export default function App() {
   return (
@@ -21,15 +23,30 @@ export default function App() {
       <Nav />
       <main id="main">
         <Hero />
+        <MotionBand
+          accent="Predictive"
+          title="maintenance"
+          caption="Vibration, current and temperature from every rotating asset, streamed continuously and scored against its own baseline."
+          scene="signals"
+          sceneLabel="Animated vibration traces for five assets. Two show the repeating impulses of a bearing defect."
+        />
         <Architecture />
         <Capabilities />
         <TaglineReveal />
         <UseCases />
+        <MotionBand
+          accent="Edge to cloud"
+          title="telemetry"
+          caption="Gateways on every line publish to one broker. Historians, the ML engine and dashboards all read the same topic tree."
+          scene="telemetry"
+          sceneLabel="Animated data flow from six edge gateways through an MQTT broker to a historian, the ML engine and dashboards."
+        />
         <HowItWorks />
         <Faq />
         <Contact />
       </main>
       <Footer />
+      <FloatingActions />
     </div>
   );
 }

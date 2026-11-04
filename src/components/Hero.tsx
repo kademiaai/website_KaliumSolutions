@@ -3,7 +3,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { ArrowRightIcon, ShieldCheckIcon } from '@phosphor-icons/react';
 import { PROTOCOLS } from '../content';
 import { AssetHealthPanel } from './AssetHealthPanel';
-import { BASE_EASE, Container, Eyebrow, primaryButton } from './ui';
+import { BASE_EASE, BounceIn, Container, Eyebrow, primaryButton } from './ui';
 
 export const Hero: React.FC = () => {
   const reduce = useReducedMotion();
@@ -52,10 +52,16 @@ export const Hero: React.FC = () => {
         <motion.div {...rise(0.1)} className="flex flex-col gap-3">
           <p className="caption-4 text-fg-faint">Reads directly from</p>
           <ul className="flex flex-wrap gap-2">
-            {PROTOCOLS.map((p) => (
-              <li key={p} className="rounded-md border border-line bg-panel px-2 py-1 font-mono caption-4 text-fg-muted">
+            {PROTOCOLS.map((p, i) => (
+              <BounceIn
+                as="li"
+                key={p}
+                index={i}
+                baseDelay={0.3}
+                className="rounded-md border border-line bg-panel px-2 py-1 font-mono caption-4 text-fg-muted transition-transform duration-300 hover:scale-110"
+              >
                 {p}
-              </li>
+              </BounceIn>
             ))}
           </ul>
         </motion.div>

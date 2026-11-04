@@ -1,7 +1,7 @@
 import React from 'react';
 import { GaugeIcon, GitBranchIcon, PlugsConnectedIcon, StackIcon, CheckIcon } from '@phosphor-icons/react';
 import { CAPABILITIES } from '../content';
-import { Container, Reveal, SectionHeader } from './ui';
+import { BounceIn, Container, Reveal, SectionHeader } from './ui';
 
 const icons = {
   pdm: GaugeIcon,
@@ -25,13 +25,15 @@ export const Capabilities: React.FC = () => (
       {/* Hairline grid: 1px gaps over a #272727 fill draw the dividers, so no card gets a one sided border. */}
       <Reveal>
         <div className="grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-2">
-          {CAPABILITIES.map((cap) => {
+          {CAPABILITIES.map((cap, i) => {
             const Icon = icons[cap.key];
             return (
               <article key={cap.key} className="group flex flex-col gap-6 bg-canvas p-6 transition-colors hover:bg-panel sm:p-8">
-                <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-line-strong bg-panel-2 text-accent transition-transform duration-500 group-hover:-translate-y-0.5">
-                  <Icon size={20} aria-hidden="true" />
-                </span>
+                <BounceIn index={i} className="w-fit">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-line-strong bg-panel-2 text-accent transition-transform duration-[600ms] group-hover:scale-110">
+                    <Icon size={20} aria-hidden="true" />
+                  </span>
+                </BounceIn>
                 <div className="flex flex-col gap-2">
                   <h3 className="title-1 text-fg">{cap.title}</h3>
                   <p className="body-6 text-fg-muted">{cap.body}</p>

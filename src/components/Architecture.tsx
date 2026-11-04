@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChartLineUpIcon, CpuIcon, FlowArrowIcon, WaveformIcon, GitBranchIcon, BroadcastIcon } from '@phosphor-icons/react';
 import { COLLECTOR_YAML, PIPELINE, SPARKPLUG_PAYLOAD, SPARKPLUG_TOPIC } from '../content';
-import { Container, Reveal, SectionHeader } from './ui';
+import { BounceIn, Container, Reveal, SectionHeader } from './ui';
 
 const stageIcons = {
   collectors: CpuIcon,
@@ -75,9 +75,15 @@ export const Architecture: React.FC = () => (
           {PIPELINE.map((stage, i) => {
             const Icon = stageIcons[stage.key];
             return (
-              <li key={stage.key} className="relative flex flex-col gap-4 rounded-xl border border-line bg-panel p-6">
+              <BounceIn
+                as="li"
+                from="up"
+                index={i}
+                key={stage.key}
+                className="group relative flex flex-col gap-4 rounded-xl border border-line bg-panel p-6 transition-colors duration-500 hover:border-line-strong"
+              >
                 <div className="flex items-center justify-between">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-line-strong bg-panel-2 text-fg">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-line-strong bg-panel-2 text-fg transition-transform duration-[600ms] group-hover:scale-110">
                     <Icon size={20} aria-hidden="true" />
                   </span>
                   <span className="font-mono caption-4 text-fg-faint">0{i + 1}</span>
@@ -94,7 +100,7 @@ export const Architecture: React.FC = () => (
                     </li>
                   ))}
                 </ul>
-              </li>
+              </BounceIn>
             );
           })}
         </ol>

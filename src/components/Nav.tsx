@@ -24,12 +24,46 @@ function useActiveSection(ids: readonly string[]) {
   return active;
 }
 
+// "Sticky jump" header, after abvietnam.vn: slides away while scrolling down, slides back in on any
+// scroll up. One scroll listener, throttled through requestAnimationFrame.
+function useHideOnScroll(disabled: boolean) {
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => {
+    if (disabled) {
+      setHidden(false);
+      return;
+    }
+    let lastY = window.scrollY;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const y = window.scrollY;
+      const delta = y - lastY;
+      if (y < 120) setHidden(false);
+      else if (delta > 6) setHidden(true);
+      else if (delta < -6) setHidden(false);
+      lastY = y;
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [disabled]);
+  return hidden;
+}
+
 const sectionIds = [...NAV_LINKS.map((l) => l.id), 'contact'];
 
 export const Nav: React.FC = () => {
   const [open, setOpen] = useState(false);
   const active = useActiveSection(sectionIds);
   const reduce = useReducedMotion();
+  const [focusWithin, setFocusWithin] = useState(false);
+  const hidden = useHideOnScroll(open || focusWithin);
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
@@ -42,7 +76,13 @@ export const Nav: React.FC = () => {
     <header className="fixed inset-x-0 top-4 z-50 flex justify-center px-4">
       <nav
         aria-label="Main"
-        className="flex w-full max-w-3xl items-center justify-between gap-4 rounded-2xl border border-line bg-canvas/70 py-2 pl-4 pr-2 backdrop-blur-xl"
+        onFocus={() => setFocusWithin(true)}
+        onBlur={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget as Node)) setFocusWithin(false);
+        }}
+        className={`flex w-full max-w-3xl items-center justify-between gap-4 rounded-2xl border border-line bg-canvas/70 py-2 pl-4 pr-2 backdrop-blur-xl transition duration-500 ${
+          hidden ? '-translate-y-24 opacity-0' : 'translate-y-0 opacity-100'
+        }`}
       >
         <a href="#top" className="flex items-center gap-2 rounded-lg" onClick={() => setOpen(false)}>
           <img src="/logo.svg" alt="" width={24} height={24} className="h-6 w-6" />

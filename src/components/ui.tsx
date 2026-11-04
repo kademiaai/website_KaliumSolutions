@@ -33,6 +33,40 @@ export const SectionHeader: React.FC<{
   </div>
 );
 
+// Bounce entrance, matched to abvietnam.vn (Flatsome "bounceIn" / "bounceInUp"):
+// transform 0.8s on an overshoot curve, opacity 0.5s, 0.2s stagger between siblings capped at 1s.
+export const BOUNCE_EASE = [0, 0.195, 0, 1.465] as const;
+export const OPACITY_EASE = [0.42, 0, 1, 1] as const;
+
+export const BounceIn: React.FC<
+  React.PropsWithChildren<{
+    className?: string;
+    index?: number;
+    from?: 'scale' | 'up';
+    as?: 'div' | 'li' | 'span';
+    baseDelay?: number;
+  }>
+> = ({ className, index = 0, from = 'scale', as = 'div', baseDelay = 0, children }) => {
+  const reduce = useReducedMotion();
+  const Tag = motion[as];
+  const delay = baseDelay + Math.min(index * 0.2, 1);
+  const hiddenState = reduce ? { opacity: 0 } : from === 'scale' ? { opacity: 0, scale: 1.3 } : { opacity: 0, y: 70 };
+  return (
+    <Tag
+      className={className}
+      initial={hiddenState}
+      whileInView={{ opacity: 1, scale: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{
+        default: { duration: 0.8, ease: BOUNCE_EASE, delay },
+        opacity: { duration: 0.5, ease: OPACITY_EASE, delay },
+      }}
+    >
+      {children}
+    </Tag>
+  );
+};
+
 // Scroll reveal (B7): rise 32px and fade in once, on the base curve.
 // With reduced motion the content only fades.
 export const Reveal: React.FC<React.PropsWithChildren<{ className?: string; delay?: number }>> = ({

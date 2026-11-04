@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import React, { useEffect, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { ASSETS, Asset, Status } from '../content';
 import { BASE_EASE } from './ui';
 
@@ -44,9 +44,36 @@ const TrendChart: React.FC<{ asset: Asset }> = ({ asset }) => {
 export const AssetHealthPanel: React.FC = () => {
   const [selectedId, setSelectedId] = useState(ASSETS[0].id);
   const selected = ASSETS.find((a) => a.id === selectedId) ?? ASSETS[0];
+  const sorted = [...ASSETS].sort((a, b) => a.rulDays - b.rulDays);
+
+  // Auto advance like a product carousel (every 3s, as on abvietnam.vn). Pauses on hover or focus,
+  // stops for good once someone picks a row, and never runs with reduced motion.
+  const reduce = useReducedMotion();
+  const [paused, setPaused] = useState(false);
+  const [userPicked, setUserPicked] = useState(false);
+  useEffect(() => {
+    if (reduce || paused || userPicked) return;
+    const timer = window.setInterval(() => {
+      setSelectedId((id) => {
+        const i = sorted.findIndex((a) => a.id === id);
+        return sorted[(i + 1) % sorted.length].id;
+      });
+    }, 3000);
+    return () => window.clearInterval(timer);
+  }, [reduce, paused, userPicked]);
+  const pick = (id: string) => {
+    setUserPicked(true);
+    setSelectedId(id);
+  };
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-line bg-panel">
+    <div
+      className="overflow-hidden rounded-2xl border border-line bg-panel"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+    >
       {/* Window bar */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-4 py-3">
         <div className="flex items-center gap-2">
@@ -71,15 +98,13 @@ export const AssetHealthPanel: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {[...ASSETS]
-                .sort((a, b) => a.rulDays - b.rulDays)
-                .map((asset) => {
+              {sorted.map((asset) => {
                   const isSelected = asset.id === selected.id;
                   return (
                     <tr
                       key={asset.id}
                       className={`cursor-pointer transition-colors ${isSelected ? 'bg-panel-2' : 'hover:bg-panel-2/60'}`}
-                      onClick={() => setSelectedId(asset.id)}
+                      onClick={() => pick(asset.id)}
                     >
                       <td className="px-4 py-2">
                         <button
@@ -87,7 +112,7 @@ export const AssetHealthPanel: React.FC = () => {
                           aria-pressed={isSelected}
                           onClick={(e) => {
                             e.stopPropagation();
-                            setSelectedId(asset.id);
+                            pick(asset.id);
                           }}
                           className="flex flex-col items-start rounded-md text-left"
                         >

@@ -1,7 +1,7 @@
 import React from 'react';
 import { ClipboardTextIcon, GaugeIcon, PulseIcon } from '@phosphor-icons/react';
 import { STEPS, USE_CASES } from '../content';
-import { Container, Reveal, SectionHeader } from './ui';
+import { BounceIn, Container, Reveal, SectionHeader } from './ui';
 
 const icons = { rotating: GaugeIcon, downtime: PulseIcon, workflows: ClipboardTextIcon } as const;
 
@@ -21,10 +21,10 @@ export const UseCases: React.FC = () => (
         {USE_CASES.map((uc, i) => {
           const Icon = icons[uc.key];
           return (
-            <Reveal key={uc.key} delay={i * 0.08} className="h-full">
-              <article className="flex h-full flex-col gap-6 rounded-xl border border-line bg-panel p-6">
+            <BounceIn key={uc.key} from="up" index={i} className="h-full">
+              <article className="group flex h-full flex-col gap-6 rounded-xl border border-line bg-panel p-6 transition duration-[600ms] hover:-translate-y-1 hover:border-line-strong">
                 <div className="flex flex-col gap-4">
-                  <Icon size={24} className="text-accent" aria-hidden="true" />
+                  <Icon size={24} className="text-accent transition-transform duration-[600ms] group-hover:scale-110" aria-hidden="true" />
                   <p className="caption-4 text-fg-faint">{uc.tag}</p>
                   <h3 className="heading-6 text-fg">{uc.title}</h3>
                 </div>
@@ -39,7 +39,7 @@ export const UseCases: React.FC = () => (
                   </div>
                 </dl>
               </article>
-            </Reveal>
+            </BounceIn>
           );
         })}
       </div>
@@ -58,9 +58,11 @@ export const HowItWorks: React.FC = () => (
         <ol className="grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-3">
           {STEPS.map((step, i) => (
             <li key={step.title} className="flex flex-col gap-4 bg-canvas p-6 sm:p-8">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-line-strong font-mono caption-3 text-accent">
-                {i + 1}
-              </span>
+              <BounceIn index={i} className="w-fit">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full border border-line-strong font-mono caption-3 text-accent">
+                  {i + 1}
+                </span>
+              </BounceIn>
               <h3 className="title-1 text-fg">{step.title}</h3>
               <p className="body-6 text-fg-muted">{step.body}</p>
             </li>
