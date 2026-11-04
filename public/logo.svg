@@ -1,12 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Kalium Solutions">
   <title>Kalium Solutions</title>
   <defs>
-    <linearGradient id="ks" x1="0" y1="0" x2="0" y2="64" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFB27A"/><stop offset="1" stop-color="#F97316"/></linearGradient>
-    <linearGradient id="ku" x1="26" y1="32" x2="56" y2="6" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#F97316"/><stop offset="1" stop-color="#FFB27A"/></linearGradient>
-    <linearGradient id="kl" x1="26" y1="32" x2="56" y2="58" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#C2410C"/><stop offset="1" stop-color="#EA580C"/></linearGradient>
+    <linearGradient id="h" x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFB27A"/><stop offset=".55" stop-color="#F97316"/><stop offset="1" stop-color="#EA580C"/></linearGradient>
   </defs>
-  <rect x="8" y="6" width="12" height="52" rx="2" fill="url(#ks)"/>
-  <path d="M41 6h15L39.5 32H26Z" fill="url(#ku)"/>
-  <path d="M26 32h13.5L56 58H41Z" fill="url(#kl)"/>
-  <circle cx="23" cy="32" r="2.5" fill="#4CD7F6"/>
+  <path d="M32 6.5 54.1 19.25v25.5L32 57.5 9.9 44.75v-25.5Z" fill="url(#h)" stroke="url(#h)" stroke-width="5" stroke-linejoin="round"/>
+  <g stroke="#0A0A0A" stroke-width="4.5" stroke-linecap="round" fill="none">
+    <path d="M23.5 20v24"/>
+    <path d="M23.5 33 38.5 21"/>
+    <path d="M29.6 28.2 38.5 43"/>
+  </g>
+  <circle cx="40" cy="20" r="4.25" fill="#0A0A0A"/>
+  <circle cx="40" cy="44" r="4.25" fill="#0A0A0A"/>
+  <circle cx="40" cy="20" r="1.6" fill="#4CD7F6"/>
 </svg>
