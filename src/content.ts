@@ -6,6 +6,7 @@ export const CONTACT_EMAIL = 'hello@kademia.edu.vn';
 
 export const NAV_LINKS = [
   { id: 'architecture', label: 'Architecture' },
+  { id: 'demo', label: 'Demo' },
   { id: 'capabilities', label: 'Capabilities' },
   { id: 'use-cases', label: 'Use cases' },
   { id: 'faq', label: 'FAQ' },

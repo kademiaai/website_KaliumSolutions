@@ -10,6 +10,7 @@ import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { MotionBand } from './components/MotionBand';
 import { FloatingActions } from './components/FloatingActions';
+import { ProductDemo } from './components/ProductDemo';
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
           sceneLabel="Animated vibration traces for five assets. Two show the repeating impulses of a bearing defect."
         />
         <Architecture />
+        <ProductDemo />
         <Capabilities />
         <TaglineReveal />
         <UseCases />
