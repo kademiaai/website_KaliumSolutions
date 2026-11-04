@@ -85,6 +85,13 @@ export interface StageOptions {
   maxDistance?: number;
   maxPolar?: number;
   fog?: [number, number];
+  // Per scene look, so a scene can keep the colors of the artifact it was ported from.
+  theme?: { bg: number; floor: number; gridMajor: number; grid: number; gridSize?: number; gridDiv?: number; gridOpacity?: number };
+  lights?: 'site' | 'artifact';
+  // three.js r147 (used by the artifacts) treated hex colors as linear; true reproduces that look.
+  legacyColors?: boolean;
+  fov?: number;
+  startPos?: THREE.Vector3;
   floor?: { w: number; d: number; round?: boolean };
   onSelect?: (info: ElementInfo | null) => void;
   reducedMotion?: boolean;
@@ -189,11 +196,13 @@ export function createStage(host: HTMLElement, opts: StageOptions) {
   host.appendChild(labelRenderer.domElement);
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(PAL.bg);
+  const theme = opts.theme ?? { bg: PAL.bg, floor: PAL.floor, gridMajor: PAL.gridMajor, grid: PAL.grid };
+  const col = (hex: number) => (opts.legacyColors ? new THREE.Color().setHex(hex, THREE.LinearSRGBColorSpace) : new THREE.Color(hex));
+  scene.background = col(theme.bg);
   const [fogNear, fogFar] = opts.fog ?? [200, 420];
-  scene.fog = new THREE.Fog(PAL.bg, fogNear, fogFar);
+  scene.fog = new THREE.Fog(col(theme.bg), fogNear, fogFar);
 
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.3, 800);
+  const camera = new THREE.PerspectiveCamera(opts.fov ?? 42, 1, 0.1, 800);
   const homePos = () => opts.home.target.clone().add(opts.home.dir.clone().normalize().multiplyScalar(opts.home.dist * aspectBoost()));
   let aspect = 1;
   const aspectBoost = () => (aspect < 0.8 ? 1.7 : aspect < 1.3 ? 1.25 : 1);
@@ -211,6 +220,17 @@ export function createStage(host: HTMLElement, opts: StageOptions) {
   controls.target.copy(opts.home.target);
 
   // Lights
+  if (opts.lights === 'artifact') {
+    // Same rig as the KAD-IIoT bench artifacts.
+    // Intensities times PI: r155+ dropped the legacy light units the artifacts were tuned for.
+    scene.add(new THREE.HemisphereLight(col(0xdcd8ff), col(0x2a2660), 0.85 * Math.PI));
+    const key = new THREE.DirectionalLight(0xffffff, 0.9 * Math.PI);
+    key.position.set(8, 16, 10);
+    key.castShadow = true;
+    key.shadow.mapSize.set(1024, 1024);
+    Object.assign(key.shadow.camera, { left: -18, right: 18, top: 18, bottom: -18, near: 1, far: 50 });
+    scene.add(key);
+  } else {
   scene.add(new THREE.HemisphereLight(0xffffff, 0x1a1a1a, 0.7));
   const sun = new THREE.DirectionalLight(0xffffff, 1.1);
   sun.position.set(-30, 60, 35);
@@ -222,11 +242,12 @@ export function createStage(host: HTMLElement, opts: StageOptions) {
   const rim = new THREE.DirectionalLight(PAL.accentSoft, 0.35);
   rim.position.set(40, 20, -40);
   scene.add(rim);
+  }
 
   // Floor
   if (opts.floor) {
     const { w, d, round } = opts.floor;
-    const floorMat = new THREE.MeshStandardMaterial({ color: PAL.floor, roughness: 0.95 });
+    const floorMat = new THREE.MeshStandardMaterial({ color: col(theme.floor), roughness: 0.95 });
     const floor = round
       ? new THREE.Mesh(new THREE.CircleGeometry(w / 2, 72), floorMat)
       : new THREE.Mesh(new THREE.BoxGeometry(w, 1.2, d), floorMat);
@@ -234,7 +255,11 @@ export function createStage(host: HTMLElement, opts: StageOptions) {
     else floor.position.y = -0.6;
     floor.receiveShadow = true;
     scene.add(floor);
-    const grid = new THREE.GridHelper(w, Math.round(w / 2), PAL.gridMajor, PAL.grid);
+    const grid = new THREE.GridHelper(theme.gridSize ?? w, theme.gridDiv ?? Math.round(w / 2), col(theme.gridMajor), col(theme.grid));
+    if (theme.gridOpacity !== undefined) {
+      (grid.material as THREE.Material).transparent = true;
+      (grid.material as THREE.Material).opacity = theme.gridOpacity;
+    }
     if (!round) grid.scale.z = d / w;
     grid.position.y = 0.01;
     scene.add(grid);
@@ -573,7 +598,11 @@ export function createStage(host: HTMLElement, opts: StageOptions) {
 
   // Intro: settle from a wider shot onto the home view.
   const home = homePos();
-  if (!reduce) {
+  if (opts.startPos && !reduce) {
+    camera.position.copy(opts.startPos);
+    controls.update();
+    flyTo(home, opts.home.target.clone(), 1.8);
+  } else if (!reduce) {
     camera.position.copy(home.clone().sub(opts.home.target).multiplyScalar(1.4).add(opts.home.target));
     flyTo(home, opts.home.target.clone(), 1.8);
   }
@@ -619,6 +648,12 @@ export function createStage(host: HTMLElement, opts: StageOptions) {
     onTick: (fn: (dt: number, t: number) => void) => tickers.push(fn),
     setAutoRotate: (on: boolean) => {
       controls.autoRotate = on && !reduce;
+    },
+    flyTo: (pos: THREE.Vector3, target: THREE.Vector3, dur?: number) => flyTo(pos, target, dur),
+    // Distance that fits a sphere of radius r in view, as in the artifacts' distFor().
+    distFor: (r: number) => {
+      const t = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2);
+      return (r * 1.1) / Math.min(t, t * camera.aspect) + 4.5;
     },
     setZoom: (on: boolean) => {
       controls.enableZoom = on;

@@ -2,7 +2,8 @@
 // every description here is written for customers, with internal addresses, credentials,
 // staff names and runbook steps removed.
 import { THREE, PAL, box, cyl, dome, group, mat, glowMat, polyCurve, screenTexture, type Stage, type StageOptions, type Flow } from './engine';
-import { edgeKit, otSwitch, simulatorBench, serverRack, serviceTile, cloud, consoleDesk, silo, mountingPlate } from './parts';
+import { edgeKit, otSwitch, simulatorBench, serverRack, serviceTile, cloud, consoleDesk, silo } from './parts';
+import { kitBench } from './kitBench';
 
 export interface Reading {
   label: string;
@@ -22,6 +23,7 @@ export interface SceneController {
   readingsTitle?: string;
   onReadings?: (fn: (r: Reading[], status: string) => void) => void;
   dispose?: () => void;
+  steps?: { title: string; items: { title: string; body: string }[]; go: (i: number | null) => void };
 }
 export interface SceneDef {
   id: 'plant' | 'kit' | 'lab';
@@ -449,102 +451,6 @@ const plant: SceneDef = {
 };
 
 // ======================================================================
-// 2. Edge Kit: the control panel that ships to the factory
-// ======================================================================
-const kit: SceneDef = {
-  id: 'kit',
-  stage: {
-    home: { target: V(0, 2.6, 0), dir: V(0.45, 0.28, 1), dist: 13 },
-    minDistance: 4,
-    maxDistance: 30,
-    fog: [30, 70],
-    floor: { w: 26, d: 26, round: true },
-    autoRotate: true,
-  },
-  build(s) {
-    const panel = group(0, 0, 0);
-    s.scene.add(panel);
-    // Enclosure: back plate, side walls, top, DIN rails and cable ducts.
-    mountingPlate(6.4, 5.2, panel, 2.8, -0.6);
-    box(0.12, 5.4, 1.6, mat(PAL.graphite, { metalness: 0.5 }), -3.26, 2.8, 0.1, panel);
-    box(0.12, 5.4, 1.6, mat(PAL.graphite, { metalness: 0.5 }), 3.26, 2.8, 0.1, panel);
-    box(6.64, 0.12, 1.6, mat(PAL.graphite, { metalness: 0.5 }), 0, 5.5, 0.1, panel);
-    box(6.64, 0.12, 1.6, mat(PAL.graphite, { metalness: 0.5 }), 0, 0.1, 0.1, panel);
-    [4.0, 1.9].forEach((y) => box(5.8, 0.1, 0.08, mat(PAL.steelLight, { metalness: 0.8, roughness: 0.25 }), 0, y, -0.5, panel));
-    [4.95, 3.0, 0.85].forEach((y) => box(5.8, 0.35, 0.35, mat(0x3f3f46, { roughness: 0.8 }), 0, y, -0.38, panel));
-
-    const kitM = edgeKit(-1.1, 3.95, -0.05, 1.9);
-    s.add(kitM.g, { id: 'kit', name: 'Kalium Edge Kit', sub: 'Fanless industrial PC', group: 'Edge Kit',
-      desc: 'The heart of the panel. It reads PLCs and meters every second on its OT port, stores every value locally, runs anomaly detection and serves the console on the factory LAN. It keeps working with no Internet.',
-      rows: [['Cooling', 'Fanless, finned case'], ['Mounting', 'DIN rail'], ['Polling', 'Every 1 s'], ['Storage', 'Local time series database'], ['Offline', 'Keeps collecting and serving'], ['Updates', 'Signed, approved by the factory']],
-      note: 'Production data stays at the factory. Only Kit health goes to Kalium operations.' }, { labelY: 1.2, key: true });
-
-    const port = (id: string, name: string, sub: string, mesh: THREE.Object3D, desc: string, rows: [string, string][], at: THREE.Vector3) => {
-      const g = group();
-      s.scene.add(g);
-      mesh.getWorldPosition(g.position);
-      s.add(g, { id, name, sub, group: 'Edge Kit', desc, rows }, { labelAt: at, pick: false });
-    };
-    s.scene.updateMatrixWorld(true);
-    port('p-ot', 'OT port', 'To the machines', kitM.leds.ot, 'Connects to the isolated OT switch. The Kit polls PLCs and meters here and never routes traffic into the machine network.', [['Network', 'Isolated, no default route'], ['Protocols', 'S7, EtherNet/IP, ADS, Modbus, OPC UA']], V(0.2, -0.9, 0.5));
-    port('p-uplink', 'Uplink port', 'To the 4G router', kitM.leds.uplink, 'Outbound only connection to the dedicated 4G router. Carries Kit health and signed software releases.', [['Direction', 'Outbound only'], ['Inbound ports', 'None']], V(-0.9, -0.9, 0.5));
-    port('p-status', 'Status light', 'Collecting', kitM.leds.status, 'Shows the Kit state at a glance from the cabinet door.', [['Orange', 'Collecting'], ['Amber', 'Anomaly flagged'], ['Red', 'Needs attention']], V(0.6, 0.6, 0.5));
-
-    {
-      const g = group(2.0, 4.05, -0.2);
-      box(1.6, 0.55, 0.7, mat(0x26323a, { metalness: 0.4 }), 0, 0, 0, g);
-      for (let i = 0; i < 8; i++) box(0.12, 0.1, 0.04, i < 4 ? glowMat(PAL.data) : mat(0x111111), -0.6 + i * 0.17, 0.05, 0.36, g);
-      s.add(g, { id: 'switch', name: 'OT switch', sub: 'Isolated segment', group: 'OT network',
-        desc: 'Industrial switch that joins the PLCs, meters and converter to the Kit’s OT port, with no route out of the machine network.',
-        rows: [['Gateway', 'None (isolated)'], ['Mounting', 'DIN rail']] }, { labelY: 0.7 });
-    }
-    {
-      const g = group(2.1, 1.95, -0.2);
-      box(0.9, 0.9, 0.6, mat(PAL.steel, { metalness: 0.3 }), 0, 0, 0, g);
-      box(0.5, 0.12, 0.04, glowMat(PAL.data, 0.8), 0, 0.2, 0.31, g);
-      s.add(g, { id: 'conv', name: 'RS-485 converter', sub: 'Modbus RTU to TCP', group: 'OT network',
-        desc: 'Brings serial meters onto the OT network so the Kit can poll them like any other Modbus TCP device.',
-        rows: [['Serial side', 'Modbus RTU, RS-485'], ['Network side', 'Modbus TCP']] }, { labelY: 0.8 });
-    }
-    {
-      const g = group(-1.6, 1.95, -0.2);
-      box(2.2, 1.1, 0.75, mat(PAL.dark), 0, 0, 0, g);
-      box(0.18, 0.08, 0.04, glowMat(PAL.ok), 0.85, 0.3, 0.39, g);
-      s.add(g, { id: 'ups', name: 'DC UPS', sub: 'Ride through', group: 'Edge Kit',
-        desc: 'Keeps the Kit up through short power dips. After a longer outage the Kit is designed to be back within about two minutes, with no gap in the data.',
-        rows: [['Target recovery', 'About 2 min'], ['Data gap', 'None']] }, { labelY: 0.9 });
-    }
-    {
-      const g = group(0.3, 1.95, -0.2);
-      box(0.8, 1.0, 0.7, mat(PAL.steelLight, { metalness: 0.3 }), 0, 0, 0, g);
-      s.add(g, { id: 'psu', name: '24 V supply', sub: 'DIN rail PSU', group: 'Edge Kit',
-        desc: 'Feeds the Kit, switch and router from the panel’s mains supply.', rows: [['Output', '24 V DC']] }, { labelY: 0.8 });
-    }
-    {
-      const g = group(1.6, 5.56, 0.1);
-      box(1.4, 0.4, 0.9, mat(PAL.white, { roughness: 0.6 }), 0, 0.2, 0, g);
-      [-0.45, 0.45].forEach((x) => cyl(0.05, 0.05, 1.3, mat(PAL.graphite), x, 1.05, -0.2, g));
-      box(0.3, 0.06, 0.04, glowMat(PAL.ok), 0, 0.25, 0.46, g);
-      s.add(g, { id: 'router', name: '4G router', sub: 'Outbound only', group: 'Edge Kit',
-        desc: 'Dedicated cellular uplink, kept apart from the factory IT network. No inbound ports are opened.',
-        rows: [['Inbound ports', 'None'], ['Carries', 'Encrypted overlay to Kalium operations']] }, { labelY: 1.9, key: true });
-    }
-    // Cables: OT in cyan, uplink in orange, power in grey.
-    s.flow({ color: PAL.data, radius: 0.04, glow: true, speed: 0.12, dots: 3, points: [V(-1.0, 3.47, 0.78), V(-1.0, 2.75, 0.9), V(1.3, 2.75, 0.9), V(1.3, 4.05, 0.9), V(1.3, 4.05, 0.2)] });
-    s.flow({ color: PAL.data, radius: 0.04, glow: true, speed: 0.12, dots: 2, points: [V(2.1, 2.3, 0.15), V(2.6, 2.3, 0.15), V(2.6, 3.9, 0.15), V(2.4, 3.9, 0.2)] });
-    s.flow({ color: PAL.accent, radius: 0.04, glow: true, speed: 0.15, dots: 3, points: [V(-1.48, 3.47, 0.78), V(-1.48, 2.75, 1.0), V(-2.9, 2.75, 1.0), V(-2.9, 5.25, 1.0), V(1.0, 5.25, 1.0), V(1.0, 5.6, 0.4)] });
-    s.flow({ color: PAL.steel, dotColor: PAL.steelLight, radius: 0.035, speed: 0.06, dots: 2, points: [V(0.3, 2.45, 0.15), V(0.3, 3.0, 0.6), V(-0.6, 3.0, 0.6), V(-0.6, 3.3, 0.6)] });
-
-    // Status light breathes while collecting.
-    const led = kitM.leds.status.material as THREE.MeshStandardMaterial;
-    s.onTick((_dt, t) => {
-      if (!s.reduce) led.emissiveIntensity = 1.1 + 0.6 * Math.sin(t * 2.4);
-    });
-    return {};
-  },
-};
-
-// ======================================================================
 // 3. Simulation lab: PLC simulators drive a Kit, the fleet gateway watches
 // ======================================================================
 const SIM_OK: [string, string][] = [
@@ -726,5 +632,5 @@ const lab: SceneDef = {
   },
 };
 
-export const SCENES: Record<SceneDef['id'], SceneDef> = { plant, kit, lab };
+export const SCENES: Record<SceneDef['id'], SceneDef> = { plant, kit: kitBench, lab };
 export { polyCurve };

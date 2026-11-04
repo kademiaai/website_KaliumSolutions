@@ -30,10 +30,10 @@ const TABS: { id: TabId; label: string; sub: string; icon: React.ElementType; bl
   {
     id: 'kit',
     label: 'Edge Kit',
-    sub: 'The panel that ships to site',
+    sub: 'Built and tested on our bench',
     icon: CubeIcon,
     blurb:
-      'The DIN rail panel we install: the fanless Edge Kit, OT switch, RS-485 converter, UPS, 24 V supply and a dedicated 4G router. Click any part, including the Kit’s ports, to see what it does.',
+      'The bench where every Edge Kit is built and accepted: the build machine and fleet gateway, two Kits on DIN rail plates, the office and OT switches, and a PLC simulator. Take the tour to follow a Kit from image build to factory profile, step by step.',
   },
   {
     id: 'lab',
@@ -67,6 +67,7 @@ export const ProductDemo: React.FC = () => {
   const [actionOn, setActionOn] = useState<Record<string, boolean>>({});
   const [autoRotate, setAutoRotate] = useState(false);
   const [toast, setToast] = useState<{ message: string; tone: 'warn' | 'ok' } | null>(null);
+  const [step, setStep] = useState<number | null>(null);
 
   // Load three.js only when the section comes near the viewport.
   useEffect(() => {
@@ -86,6 +87,7 @@ export const ProductDemo: React.FC = () => {
     setReadings(null);
     setToast(null);
     setActionOn({});
+    setStep(null);
     Promise.all([import('../demo/engine'), import('../demo/scenes')])
       .then(([engine, scenes]) => {
         if (cancelled || !hostRef.current) return;
@@ -133,6 +135,10 @@ export const ProductDemo: React.FC = () => {
     setActionOn((s) => ({ ...s, [id]: on }));
     const r = ctrlRef.current?.runAction?.(id, on);
     if (r) setToast(r);
+  };
+  const goStep = (i: number | null) => {
+    setStep(i);
+    ctrlRef.current?.steps?.go(i);
   };
   const active = TABS.find((t) => t.id === tab)!;
 
@@ -272,7 +278,7 @@ export const ProductDemo: React.FC = () => {
 
             {/* Bottom toolbar: layers and scenario */}
             {ctrl && (ctrl.layers?.length || ctrl.actions?.length) ? (
-              <div className="absolute bottom-3 left-3 right-3 flex flex-wrap gap-2 sm:bottom-4 sm:left-4 sm:right-auto">
+              <div className="absolute bottom-3 left-3 right-16 flex flex-wrap gap-2 sm:bottom-4 sm:left-4 sm:right-auto">
                 {ctrl.layers && ctrl.layers.length > 0 && (
                   <div role="group" aria-label="Layers" className="flex flex-wrap gap-1 rounded-xl border border-line bg-canvas/80 p-1 backdrop-blur">
                     {ctrl.layers.map((l) => (
@@ -310,6 +316,64 @@ export const ProductDemo: React.FC = () => {
               </div>
             ) : null}
 
+            {/* Step through walkthrough (Edge Kit bench) */}
+            {ctrl?.steps && (
+              <div className="absolute bottom-3 left-3 right-16 rounded-xl border border-line bg-canvas/85 p-3 backdrop-blur sm:bottom-4 sm:left-4 sm:right-auto sm:w-96 sm:p-4">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="caption-3 uppercase tracking-widest text-accent">{ctrl.steps.title}</p>
+                  <p className="font-mono caption-5 text-fg-faint">
+                    {step === null ? 'Overview' : `${step + 1} / ${ctrl.steps.items.length}`}
+                  </p>
+                </div>
+                {step !== null && (
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={step}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3, ease: BASE_EASE }}
+                      className="mt-2 flex flex-col gap-1"
+                    >
+                      <p className="title-3 text-fg">{ctrl.steps.items[step].title}</p>
+                      <p className="hidden body-6 text-fg-muted sm:block">{ctrl.steps.items[step].body}</p>
+                    </motion.div>
+                  </AnimatePresence>
+                )}
+                {step === null && <p className="mt-2 hidden body-6 text-fg-muted sm:block">Everything commissioned: both Kits online and reporting. Start the tour to rebuild it phase by phase.</p>}
+                <div className="mt-3 flex items-center gap-2">
+                  <div className="flex gap-1" aria-hidden="true">
+                    {ctrl.steps.items.map((_, i) => (
+                      <span key={i} className={`h-1.5 w-1.5 rounded-full ${step !== null && i <= step ? 'bg-accent' : 'bg-line-strong'}`} />
+                    ))}
+                  </div>
+                  <div className="ml-auto flex gap-2">
+                    {step !== null && (
+                      <button type="button" onClick={() => goStep(null)} className="rounded-lg px-2 py-1 button-xsm text-fg-muted transition hover:text-fg active:scale-[0.98]">
+                        Overview
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      disabled={step === null || step === 0}
+                      onClick={() => step !== null && goStep(step - 1)}
+                      className="rounded-lg border border-line-strong px-2 py-1 button-xsm text-fg transition hover:bg-panel-2 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="button"
+                      disabled={step === ctrl.steps.items.length - 1}
+                      onClick={() => goStep(step === null ? 0 : step + 1)}
+                      className="rounded-lg bg-accent px-3 py-1 button-xsm text-canvas transition hover:bg-accent-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      {step === null ? 'Start tour' : 'Next step'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Toast for scenario results */}
             <AnimatePresence>
               {toast && (
@@ -346,7 +410,7 @@ export const ProductDemo: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.4, ease: BASE_EASE }}
-                  className="absolute bottom-16 left-3 right-3 max-h-[55%] overflow-auto rounded-xl border border-line-strong bg-panel/95 p-4 backdrop-blur sm:bottom-4 sm:left-auto sm:right-4 sm:w-80"
+                  className={`absolute left-3 right-3 max-h-[55%] overflow-auto rounded-xl border border-line-strong bg-panel/95 p-4 backdrop-blur sm:bottom-4 sm:left-auto sm:right-4 sm:top-auto sm:w-80 ${ctrl?.steps ? 'top-14' : 'bottom-16'}`}
                 >
                   <button
                     type="button"
