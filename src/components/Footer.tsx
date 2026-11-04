@@ -1,209 +1,56 @@
 import React from 'react';
+import { EnvelopeSimpleIcon, MapPinIcon } from '@phosphor-icons/react';
+import { CONTACT_EMAIL, NAV_LINKS } from '../content';
+import { Container } from './ui';
 
-interface FooterProps {
-  onNavigate?: (page: 'overview' | 'capabilities', sectionId?: string) => void;
-}
-
-export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
-  const handleNav = (
-    e: React.MouseEvent,
-    page: 'overview' | 'capabilities',
-    sectionId?: string
-  ) => {
-    e.preventDefault();
-    if (onNavigate) {
-      onNavigate(page, sectionId);
-    }
-  };
-
-  return (
-    <footer className="w-full bg-surface-container-lowest border-t border-surface-container py-space-3xl">
-      <div className="max-w-container-max mx-auto px-gutter-mobile lg:px-gutter-desktop">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-space-2xl pb-space-3xl border-b border-surface-container">
-          {/* Col 1: Brand & Identity */}
-          <div className="md:col-span-1">
-            <div className="flex items-center gap-space-sm mb-space-md">
-              <img
-            alt=""
-            aria-hidden="true"
-            width={32}
-            height={32}
-            className="h-7 w-auto"
-            src="/logo.svg"
-          />
-              <span className="font-headline-sm text-headline-sm text-on-surface tracking-tight">
-                Kalium Solutions
-              </span>
-            </div>
-            <p className="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-              Architecting deterministic industrial telemetry, predictive machine intelligence, and agile digital transformation frameworks for global discrete and process enterprises.
-            </p>
-          </div>
-
-          {/* Col 2: Solutions */}
-          <div>
-            <h4 className="font-headline-sm text-[14px] text-on-surface font-bold uppercase tracking-wider mb-space-md">
-              Solutions
-            </h4>
-            <ul className="flex flex-col gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
-              <li>
-                <a
-                  className="hover:text-secondary transition-colors cursor-pointer"
-                  href="#solutions"
-                  onClick={(e) => handleNav(e, 'overview', 'solutions')}
-                >
-                  Edge IIoT Telemetry
-                </a>
-              </li>
-              <li>
-                <a
-                  className="hover:text-secondary transition-colors cursor-pointer"
-                  href="#solutions"
-                  onClick={(e) => handleNav(e, 'overview', 'solutions')}
-                >
-                  Predictive Maintenance
-                </a>
-              </li>
-              <li>
-                <a
-                  className="hover:text-secondary transition-colors cursor-pointer"
-                  href="#solutions"
-                  onClick={(e) => handleNav(e, 'overview', 'solutions')}
-                >
-                  PowerPlatform Workflows
-                </a>
-              </li>
-              <li>
-                <a
-                  className="hover:text-secondary transition-colors cursor-pointer"
-                  href="#solutions"
-                  onClick={(e) => handleNav(e, 'overview', 'solutions')}
-                >
-                  Smart Factory OEE
-                </a>
-              </li>
-              <li>
-                <a
-                  className="hover:text-secondary transition-colors cursor-pointer"
-                  href="#solutions"
-                  onClick={(e) => handleNav(e, 'overview', 'solutions')}
-                >
-                  Zero-Trust OT/IT Cloud
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 3: Company & Governance */}
-          <div>
-            <h4 className="font-headline-sm text-[14px] text-on-surface font-bold uppercase tracking-wider mb-space-md">
-              Company
-            </h4>
-            <ul className="flex flex-col gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
-              <li>
-                <a
-                  className="hover:text-secondary transition-colors cursor-pointer"
-                  href="#capabilities"
-                  onClick={(e) => handleNav(e, 'capabilities')}
-                >
-                  Engineering Capabilities
-                </a>
-              </li>
-              <li>
-                <a
-                  className="hover:text-secondary transition-colors cursor-pointer"
-                  href="#clients-and-partners"
-                  onClick={(e) => handleNav(e, 'overview', 'clients-and-partners')}
-                >
-                  Partners &amp; Clients
-                </a>
-              </li>
-              <li>
-                <a
-                  className="hover:text-secondary transition-colors cursor-pointer"
-                  href="#insights"
-                  onClick={(e) => handleNav(e, 'overview', 'insights')}
-                >
-                  Case Studies &amp; Insights
-                </a>
-              </li>
-              <li>
-                <a
-                  className="hover:text-secondary transition-colors cursor-pointer"
-                  href="#contact"
-                  onClick={(e) => handleNav(e, 'overview', 'contact')}
-                >
-                  Plant Maturity Audits
-                </a>
-              </li>
-              <li>
-                <a
-                  className="hover:text-secondary transition-colors cursor-pointer"
-                  href="#contact"
-                  onClick={(e) => handleNav(e, 'overview', 'contact')}
-                >
-                  Careers &amp; EPC Support
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 4: Contact & Operations */}
-          <div>
-            <h4 className="font-headline-sm text-[14px] text-on-surface font-bold uppercase tracking-wider mb-space-md">
-              Operations
-            </h4>
-            <div className="flex flex-col gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
-              <div className="flex items-center gap-space-xs">
-                <span className="material-symbols-outlined text-secondary text-[16px]">
-                  location_on
-                </span>
-                <span>Vietnam • Southeast Asia • EU Operations</span>
-              </div>
-              <div className="flex items-center gap-space-xs">
-                <span className="material-symbols-outlined text-primary text-[16px]">mail</span>
-                <span>contact@kaliumsolutions.com</span>
-              </div>
-              <div className="flex items-center gap-space-xs mt-space-sm">
-                <span className="w-2 h-2 rounded-full bg-secondary"></span>
-                <span className="font-label-code text-label-code text-on-surface">
-                  ISO-95 / IEC-62443 COMPLIANT
-                </span>
-              </div>
-            </div>
-          </div>
+export const Footer: React.FC = () => (
+  <footer className="border-t border-line py-16">
+    <Container className="flex flex-col gap-12">
+      <div className="grid gap-12 md:grid-cols-3">
+        <div className="flex flex-col gap-4">
+          <a href="#top" className="flex w-fit items-center gap-2 rounded-lg">
+            <img src="/logo.svg" alt="" width={24} height={24} className="h-6 w-6" />
+            <span className="title-3 text-fg">Kalium Solutions</span>
+          </a>
+          <p className="body-6 max-w-xs text-fg-muted">
+            Industrial IoT, condition monitoring and predictive maintenance for manufacturing plants.
+          </p>
         </div>
 
-        {/* Bottom Row */}
-        <div className="flex flex-wrap items-center justify-between pt-space-xl gap-space-md font-body-sm text-body-sm text-on-surface-variant">
-          <div>
-            © 2024 Kalium Solutions Co., Ltd. All rights reserved. Precision engineering for modern manufacturing.
-          </div>
-          <div className="flex items-center gap-space-lg font-label-code text-label-code">
-            <a
-              className="hover:text-on-surface cursor-pointer"
-              href="#contact"
-              onClick={(e) => handleNav(e, 'overview', 'contact')}
-            >
-              PRIVACY POLICY
-            </a>
-            <a
-              className="hover:text-on-surface cursor-pointer"
-              href="#contact"
-              onClick={(e) => handleNav(e, 'overview', 'contact')}
-            >
-              TERMS OF SERVICE
-            </a>
-            <a
-              className="hover:text-on-surface cursor-pointer"
-              href="#contact"
-              onClick={(e) => handleNav(e, 'overview', 'contact')}
-            >
-              SECURITY ARCHITECTURE
-            </a>
-          </div>
+        <nav aria-label="Footer" className="flex flex-col gap-3">
+          <p className="caption-3 uppercase tracking-widest text-fg-faint">Product</p>
+          <ul className="flex flex-col gap-2">
+            {[...NAV_LINKS, { id: 'how-it-works', label: 'How it works' }, { id: 'contact', label: 'Book a technical demo' }].map(
+              (l) => (
+                <li key={l.id}>
+                  <a href={`#${l.id}`} className="rounded-md body-6 text-fg-muted transition-colors hover:text-fg">
+                    {l.label}
+                  </a>
+                </li>
+              ),
+            )}
+          </ul>
+        </nav>
+
+        <div className="flex flex-col gap-3">
+          <p className="caption-3 uppercase tracking-widest text-fg-faint">Contact</p>
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="flex w-fit items-center gap-2 rounded-md body-6 text-fg-muted transition-colors hover:text-fg"
+          >
+            <EnvelopeSimpleIcon size={16} aria-hidden="true" />
+            {CONTACT_EMAIL}
+          </a>
+          <p className="flex items-center gap-2 body-6 text-fg-muted">
+            <MapPinIcon size={16} aria-hidden="true" />
+            Vietnam · Southeast Asia · EU
+          </p>
         </div>
       </div>
-    </footer>
-  );
-};
+
+      <p className="caption-5 text-fg-faint">
+        © {new Date().getFullYear()} Kalium Solutions Co., Ltd. All rights reserved.
+      </p>
+    </Container>
+  </footer>
+);
