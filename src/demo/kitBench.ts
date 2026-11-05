@@ -3,6 +3,7 @@
 // Left out for the public site: the task checklist, IP addresses, hostnames and credential steps.
 import { THREE, box, group, screenTexture, plateTexture, type Stage, type ElementInfo } from './engine';
 import type { SceneController, SceneDef } from './scenes';
+import { createKitInside } from './kitInside';
 
 // Artifact palette (K1D, dark theme) and material recipes.
 const C = { navy: 0x24215a, indigo: 0x4a37cc, violet: 0x6c5ce7, lav: 0xa99cec, cyan: 0x18c9d4, steel: 0x5d6178, dark: 0x2b2950, desk: 0x8f86c9, white: 0xf2f1fb };
@@ -164,6 +165,8 @@ export const kitBench: SceneDef = {
 
     // Edge Kit on a DIN rail mounting plate
     const kitMats: Record<'kit' | 'kit2', THREE.Material[]> = { kit: [], kit2: [] };
+    // The case (body, fins, name plate) turns see through in the inside view.
+    const caseMats: Record<'kit' | 'kit2', THREE.Material[]> = { kit: [], kit2: [] };
     function buildKit(id: 'kit' | 'kit2', x: number, z: number, plateText: string) {
       const { g, labelY } = makeGroup(id, x, z, 1.5, 2.95);
       const mats = kitMats[id];
@@ -180,10 +183,15 @@ export const kitBench: SceneDef = {
       box(0.12, 0.7, 0.12, m(C.dark), 0, 0.35, -0.55, g);
       box(2.2, 2.0, 0.08, m(0xd7d4ea, { metalness: 0.1 }), 0, 1.7, -0.55, g);
       box(2.0, 0.08, 0.08, m(C.steel, { metalness: 0.7 }), 0, 1.55, -0.47, g);
-      box(1.4, 0.95, 0.85, m(C.steel, { metalness: 0.6, roughness: 0.35 }), 0, 1.55, -0.03, g);
-      for (let i = 0; i < 10; i++) box(0.05, 0.2, 0.83, m(C.steel, { metalness: 0.6 }), -0.6 + i * 0.133, 2.12, -0.03, g);
+      const bodyM = m(C.steel, { metalness: 0.6, roughness: 0.35 });
+      caseMats[id].push(bodyM);
+      box(1.4, 0.95, 0.85, bodyM, 0, 1.55, -0.03, g);
+      const finM = m(C.steel, { metalness: 0.6 });
+      caseMats[id].push(finM);
+      for (let i = 0; i < 10; i++) box(0.05, 0.2, 0.83, finM, -0.6 + i * 0.133, 2.12, -0.03, g);
       const plateMat = new THREE.MeshBasicMaterial({ map: plateTexture(plateText, '#4A37CC', '#EAE8F6'), transparent: true });
       mats.push(plateMat);
+      caseMats[id].push(plateMat);
       const plate = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.22), plateMat);
       plate.position.set(0, 1.78, 0.4);
       g.add(plate);
@@ -354,15 +362,61 @@ export const kitBench: SceneDef = {
       });
     });
 
+    // ---------- Inside the Edge Kit ----------
+    let currentStep: number | null = null;
+    let insideOf: 'kit' | 'kit2' | null = null;
+    let modeListener: ((m: { title: string; hint: string } | null) => void) | null = null;
+    const insides = {
+      kit: createKitInside(s, 'kit', groups.kit.position.clone(), caseMats.kit),
+      kit2: createKitInside(s, 'kit2', groups.kit2.position.clone(), caseMats.kit2),
+    };
+    const setBenchLabels = (on: boolean) =>
+      (Object.keys(OBJ) as ObjId[]).forEach((id) => s.entries[id]?.chip.classList.toggle('is-hidden', !on));
+    function enterInside(id: 'kit' | 'kit2') {
+      if (insideOf === id) return;
+      if (insideOf) insides[insideOf].close();
+      insideOf = id;
+      highlight([]);
+      setBenchLabels(false);
+      insides[id].open();
+      modeListener?.({ title: `Inside ${OBJ[id].name}`, hint: 'Hardware on the mainboard, software stack above. Click any part.' });
+    }
+    function exitInside(fly = true) {
+      if (!insideOf) return;
+      insides[insideOf].close();
+      insideOf = null;
+      setBenchLabels(true);
+      modeListener?.(null);
+      window.setTimeout(() => applyProgress(currentStep), 1000);
+      if (fly) overview();
+    }
+    s.onSelectChange((id) => {
+      if (id === 'kit' || id === 'kit2') {
+        enterInside(id);
+        return true;
+      }
+      if (id && insideOf && (Object.keys(OBJ) as string[]).includes(id)) exitInside(false);
+      return false;
+    });
+
     applyProgress(null);
     highlight([]);
     requestAnimationFrame(overview);
 
     return {
+      onMode: (fn) => {
+        modeListener = fn;
+      },
+      exitMode: () => {
+        s.select(null);
+        exitInside(true);
+      },
       steps: {
         title: 'Build and commission a Kit',
         items: STEPS.map(({ title, body }) => ({ title, body })),
         go: (i: number | null) => {
+          exitInside(false);
+          currentStep = i;
           if (i === null) {
             highlight([]);
             applyProgress(null);

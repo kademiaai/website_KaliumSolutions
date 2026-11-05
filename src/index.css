@@ -138,3 +138,4 @@
 .twin-chip.is-hl { border-color: #18c9d4; box-shadow: 0 0 0 1px #18c9d4; }
 .twin-chip.is-quiet { opacity: 0.45; }
 .twin-chip.is-ghost { opacity: 0.35; }
+.twin-chip.is-hidden { display: none; }

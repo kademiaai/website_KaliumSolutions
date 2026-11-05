@@ -33,7 +33,7 @@ const TABS: { id: TabId; label: string; sub: string; icon: React.ElementType; bl
     sub: 'Built and tested on our bench',
     icon: CubeIcon,
     blurb:
-      'The bench where every Edge Kit is built and accepted: the build machine and fleet gateway, two Kits on DIN rail plates, the office and OT switches, and a PLC simulator. Take the tour to follow a Kit from image build to factory profile, step by step.',
+      'The bench where every Edge Kit is built and accepted: the build machine and fleet gateway, two Kits on DIN rail plates, the office and OT switches, and a PLC simulator. Click either Kit to open it and see the hardware and software inside, or take the tour to follow a Kit from image build to factory profile.',
   },
   {
     id: 'lab',
@@ -68,6 +68,7 @@ export const ProductDemo: React.FC = () => {
   const [autoRotate, setAutoRotate] = useState(false);
   const [toast, setToast] = useState<{ message: string; tone: 'warn' | 'ok' } | null>(null);
   const [step, setStep] = useState<number | null>(null);
+  const [mode, setMode] = useState<{ title: string; hint: string } | null>(null);
 
   // Load three.js only when the section comes near the viewport.
   useEffect(() => {
@@ -88,6 +89,7 @@ export const ProductDemo: React.FC = () => {
     setToast(null);
     setActionOn({});
     setStep(null);
+    setMode(null);
     Promise.all([import('../demo/engine'), import('../demo/scenes')])
       .then(([engine, scenes]) => {
         if (cancelled || !hostRef.current) return;
@@ -106,6 +108,7 @@ export const ProductDemo: React.FC = () => {
         setLayerOn(Object.fromEntries((c.layers ?? []).map((l) => [l.id, true])));
         setAutoRotate(!!def.stage.autoRotate && !reduce);
         c.onReadings?.((rows, s) => setReadings({ rows, status: s }));
+        c.onMode?.(setMode);
         setStatus('ready');
       })
       .catch(() => !cancelled && setStatus('error'));
@@ -197,7 +200,7 @@ export const ProductDemo: React.FC = () => {
             onPointerDown={() => stageRef.current?.setZoom(true)}
             onPointerLeave={() => stageRef.current?.setZoom(false)}
           >
-            <div ref={hostRef} className="absolute inset-0" aria-label={`${active.label}, interactive 3D scene`} />
+            <div ref={hostRef} className="absolute inset-0 isolate" aria-label={`${active.label}, interactive 3D scene`} />
 
             {/* Skeleton while three.js and the scene load */}
             {status !== 'ready' && status !== 'error' && (
@@ -317,7 +320,32 @@ export const ProductDemo: React.FC = () => {
             ) : null}
 
             {/* Step through walkthrough (Edge Kit bench) */}
-            {ctrl?.steps && (
+            {/* Inside view banner (Edge Kit) */}
+            <AnimatePresence>
+              {mode && (
+                <motion.div
+                  initial={{ opacity: 0, y: reduce ? 0 : -16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4, ease: BASE_EASE }}
+                  className="absolute left-3 right-3 top-14 flex items-center gap-3 rounded-xl border border-line-strong bg-canvas/85 p-3 backdrop-blur sm:left-1/2 sm:right-auto sm:w-max sm:max-w-xl sm:-translate-x-1/2"
+                >
+                  <div className="flex min-w-0 flex-col">
+                    <p className="title-4 text-fg">{mode.title}</p>
+                    <p className="hidden caption-5 text-fg-muted sm:block">{mode.hint}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => ctrlRef.current?.exitMode?.()}
+                    className="ml-auto shrink-0 rounded-lg bg-accent px-3 py-1 button-xsm text-canvas transition hover:bg-accent-hover active:scale-[0.98]"
+                  >
+                    Back to bench
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {ctrl?.steps && !mode && (
               <div className="absolute bottom-3 left-3 right-16 rounded-xl border border-line bg-canvas/85 p-3 backdrop-blur sm:bottom-4 sm:left-4 sm:right-auto sm:w-96 sm:p-4">
                 <div className="flex items-center justify-between gap-2">
                   <p className="caption-3 uppercase tracking-widest text-accent">{ctrl.steps.title}</p>
@@ -340,7 +368,7 @@ export const ProductDemo: React.FC = () => {
                     </motion.div>
                   </AnimatePresence>
                 )}
-                {step === null && <p className="mt-2 hidden body-6 text-fg-muted sm:block">Everything commissioned: both Kits online and reporting. Start the tour to rebuild it phase by phase.</p>}
+                {step === null && <p className="mt-2 hidden body-6 text-fg-muted sm:block">Both Kits online and reporting. Click a Kit to look inside, or start the tour to rebuild it phase by phase.</p>}
                 <div className="mt-3 flex items-center gap-2">
                   <div className="flex gap-1" aria-hidden="true">
                     {ctrl.steps.items.map((_, i) => (
@@ -410,7 +438,7 @@ export const ProductDemo: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.4, ease: BASE_EASE }}
-                  className={`absolute left-3 right-3 max-h-[55%] overflow-auto rounded-xl border border-line-strong bg-panel/95 p-4 backdrop-blur sm:bottom-4 sm:left-auto sm:right-4 sm:top-auto sm:w-80 ${ctrl?.steps ? 'top-14' : 'bottom-16'}`}
+                  className={`absolute left-3 right-3 max-h-[42%] overflow-auto sm:max-h-[55%] rounded-xl border border-line-strong bg-panel/95 p-4 backdrop-blur sm:bottom-4 sm:left-auto sm:right-4 sm:top-auto sm:w-80 ${ctrl?.steps ? (mode ? 'bottom-3' : 'top-14') : 'bottom-16'}`}
                 >
                   <button
                     type="button"

@@ -24,6 +24,8 @@ export interface SceneController {
   onReadings?: (fn: (r: Reading[], status: string) => void) => void;
   dispose?: () => void;
   steps?: { title: string; items: { title: string; body: string }[]; go: (i: number | null) => void };
+  onMode?: (fn: (m: { title: string; hint: string } | null) => void) => void;
+  exitMode?: () => void;
 }
 export interface SceneDef {
   id: 'plant' | 'kit' | 'lab';

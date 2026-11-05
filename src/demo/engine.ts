@@ -35,6 +35,11 @@ export const GROUP_COLORS: Record<string, string> = {
   'Factory LAN': '#a1a1a1',
   'Fleet operations': '#ffb690',
   'Simulation bench': '#4ade80',
+  'Edge Kit hardware': '#a99cec',
+  'Kit software · system': '#a99cec',
+  'Kit software · data path': '#18c9d4',
+  'Kit software · access': '#6c5ce7',
+  'Kit software · fleet': '#4a37cc',
 };
 
 export interface ElementInfo {
@@ -423,6 +428,8 @@ export function createStage(host: HTMLElement, opts: StageOptions) {
     flyTo(center.clone().add(dir.multiplyScalar(d)), center);
   }
 
+  // Scenes can react to selection; a hook returning true takes over the camera move.
+  const selectHooks: ((id: string | null) => boolean | void)[] = [];
   function select(id: string | null, fly = false) {
     if (selected) {
       setGlow(selected, false, 0);
@@ -431,12 +438,14 @@ export function createStage(host: HTMLElement, opts: StageOptions) {
     selected = id;
     if (!id || !entries[id]) {
       opts.onSelect?.(null);
+      selectHooks.forEach((h) => h(null));
       return;
     }
     const e = entries[id];
     e.chip.classList.add('is-sel');
     opts.onSelect?.(e.info);
-    if (fly) flyToObject(e.obj);
+    const handled = selectHooks.map((h) => h(id)).some((r) => r === true);
+    if (fly && !handled) flyToObject(e.obj);
   }
 
   function reset() {
@@ -646,6 +655,7 @@ export function createStage(host: HTMLElement, opts: StageOptions) {
     setAlarm,
     entries,
     onTick: (fn: (dt: number, t: number) => void) => tickers.push(fn),
+    onSelectChange: (fn: (id: string | null) => boolean | void) => selectHooks.push(fn),
     setAutoRotate: (on: boolean) => {
       controls.autoRotate = on && !reduce;
     },
