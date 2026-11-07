@@ -11,6 +11,7 @@ import { Footer } from './components/Footer';
 import { MotionBand } from './components/MotionBand';
 import { FloatingActions } from './components/FloatingActions';
 import { ProductDemo } from './components/ProductDemo';
+import { DeployOptions } from './components/DeployOptions';
 
 export default function App() {
   return (
@@ -36,13 +37,7 @@ export default function App() {
         <Capabilities />
         <TaglineReveal />
         <UseCases />
-        <MotionBand
-          accent="Edge to cloud"
-          title="telemetry"
-          caption="Gateways on every line publish to one broker. Historians, the ML engine and dashboards all read the same topic tree."
-          scene="telemetry"
-          sceneLabel="Animated data flow from six edge gateways through an MQTT broker to a historian, the ML engine and dashboards."
-        />
+        <DeployOptions />
         <HowItWorks />
         <Faq />
         <Contact />

@@ -149,6 +149,60 @@ export const CONSUMPTION = {
   finding: 'Compressed air still drew 94 Nm³/h while the line was stopped from 02:00 to 04:00. Likely leaks on the packing pneumatics.',
 };
 
+// ---------- Deployment options: where the data lives ----------
+
+export type DeployMode = 'edge' | 'onprem' | 'cloud';
+
+export const DEPLOY_OPTIONS: {
+  id: DeployMode;
+  name: string;
+  tagline: string;
+  rows: [string, string][];
+}[] = [
+  {
+    id: 'edge',
+    name: 'Edge Kit only',
+    tagline: 'Everything stays on the Kit',
+    rows: [
+      ['Data lives in', 'The Kit’s own database'],
+      ['Leaves the plant', 'Nothing but Kit health'],
+      ['Cost', 'Lowest: no server or cloud fees'],
+      ['Privacy', 'Highest: data never leaves the Kit'],
+      ['Best for', 'A pilot on one line, sites with little IT'],
+    ],
+  },
+  {
+    id: 'onprem',
+    name: 'On premise',
+    tagline: 'One database inside your plant',
+    rows: [
+      ['Data lives in', 'Kit, plus a database on your plant server'],
+      ['Leaves the plant', 'Nothing but Kit health'],
+      ['Cost', 'Runs on a server you already own'],
+      ['Privacy', 'Data stays inside your plant network'],
+      ['Best for', 'Several lines in one database, MES and ERP links'],
+    ],
+  },
+  {
+    id: 'cloud',
+    name: 'Cloud',
+    tagline: 'Your own cloud tenant',
+    rows: [
+      ['Data lives in', 'Kit, plus your cloud tenant'],
+      ['Leaves the plant', 'Encrypted, outbound only, to your tenant'],
+      ['Cost', 'Pay as you grow in your own cloud account'],
+      ['Privacy', 'You own the tenant and control access'],
+      ['Best for', 'Multi site comparison and corporate reporting'],
+    ],
+  },
+];
+
+export const PILOT_PATH = [
+  { title: 'Pilot', body: 'One line, one Edge Kit, data kept on the Kit. No servers or cloud accounts needed.' },
+  { title: 'Prove', body: 'Measure OEE, energy per unit and downtime against your own baseline before you commit.' },
+  { title: 'Scale', body: 'Add lines and sites, and add an on premise or cloud destination only when you need it.' },
+];
+
 // ---------- Architecture ----------
 
 export const PIPELINE = [
@@ -331,8 +385,8 @@ export const FAQ = [
     a: 'Edge gateways keep collecting and store data locally, then forward it in order once the link is back. Sparkplug B birth and death messages tell every consumer which devices were offline and when.',
   },
   {
-    q: 'Where do analytics and dashboards run?',
-    a: 'Collection and first stage processing always run on site. Analytics and dashboards can run in your own cloud tenant or in a hybrid setup. We agree the split with your IT team during the audit.',
+    q: 'Where is our data stored, and do we need the cloud?',
+    a: 'You choose, and the cloud is optional. Every reading is stored on the Edge Kit first. You can keep it there, add an on premise database on a server inside your plant, or send it encrypted to your own cloud tenant for multi site reporting. Many plants start on the Kit alone during a pilot and add a destination later.',
   },
   {
     q: 'How is OT network security handled?',

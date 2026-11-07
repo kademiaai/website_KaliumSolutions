@@ -26,6 +26,7 @@ sections fits better than a long story or a comparison page.
 | 2 | Architecture | Show how data flows | 4 stage cards in a row joined by an animated track; 2 code panels below (collector config in Git, Sparkplug B payload) |
 | 3 | Capabilities | Benefits, outcome first | 2 × 2 grid with hairline dividers; icon, title, description, 3 technical specifics each |
 | 4 | Tagline reveal | Restate the core benefit | Large centered text, words light up one by one on scroll |
+| 4b | Deployment options | Edge, on premise or cloud; start small | Option switcher over an animated data flow (plant boundary, Kit database, plant server, cloud tenant), comparison cards, pilot to scale path |
 | 5 | Use cases | Concrete operational value | 3 cards: assets, what we measure, what you get |
 | 6 | How it works | Lower the perceived effort | 3 numbered steps in a row; risk reversal line under them |
 | 7 | FAQ | Handle technical objections | Two column: heading left, accordion right |
