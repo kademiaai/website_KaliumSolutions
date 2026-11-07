@@ -186,7 +186,7 @@ export const Contact: React.FC = () => {
                     <textarea
                       {...p}
                       rows={4}
-                      placeholder="For example: repeated bearing failures on the palletizer gearbox, and no vibration data today."
+                      placeholder="For example: OEE per shift on line 3, energy per batch on the dryer, and early warning on the palletizer gearbox."
                       value={fields.notes}
                       onChange={set('notes')}
                     />

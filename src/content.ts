@@ -113,6 +113,42 @@ export const ASSETS: Asset[] = [
   },
 ];
 
+// ---------- Hero sample dashboard: production and consumption views (sample data) ----------
+
+export const PRODUCTION = {
+  oee: 71.3,
+  parts: [
+    { label: 'Availability', value: 86.2 },
+    { label: 'Performance', value: 88.9 },
+    { label: 'Quality', value: 93.1 },
+  ],
+  shifts: [
+    { shift: 'Shift A · 06:00', plan: 11520, actual: 10387, oee: 74.8 },
+    { shift: 'Shift B · 14:00', plan: 11520, actual: 9614, oee: 69.3 },
+    { shift: 'Shift C · 22:00', plan: 11520, actual: 9951, oee: 70.1 },
+  ],
+  stops: [
+    { reason: 'Palletizer jam', minutes: 47, count: 6 },
+    { reason: 'Labeller reel change', minutes: 31, count: 9 },
+    { reason: 'Infeed starved', minutes: 22, count: 4 },
+    { reason: 'Micro stops under 2 min', minutes: 19, count: 38 },
+  ],
+};
+
+export const CONSUMPTION = {
+  perUnitLabel: 'per 1,000 cases',
+  utilities: [
+    { label: 'Electricity', total: '1,214.6 kWh', perUnit: '40.6 kWh', delta: -3.2 },
+    { label: 'Steam', total: '5.83 t', perUnit: '0.195 t', delta: 1.7 },
+    { label: 'Compressed air', total: '4,159 Nm³', perUnit: '139 Nm³', delta: 11.4 },
+    { label: 'Water', total: '92.8 m³', perUnit: '3.10 m³', delta: -0.6 },
+  ],
+  // Compressed air flow by hour, Nm³/h. The line stops 02:00 to 04:00.
+  airByHour: [182, 177, 96, 92, 168, 175, 186, 191, 179, 183, 188, 172, 176, 181, 185, 190, 178, 174, 180, 187, 183, 179, 176, 181],
+  stoppedHours: [2, 3],
+  finding: 'Compressed air still drew 94 Nm³/h while the line was stopped from 02:00 to 04:00. Likely leaks on the packing pneumatics.',
+};
+
 // ---------- Architecture ----------
 
 export const PIPELINE = [
@@ -130,15 +166,15 @@ export const PIPELINE = [
   },
   {
     key: 'ml',
-    title: 'ML engine',
-    body: 'Learn a baseline per asset, score anomalies, and estimate remaining useful life.',
-    specs: ['FFT and envelope spectra', 'Anomaly score per asset', 'RUL with confidence range'],
+    title: 'Analytics engine',
+    body: 'Roll readings up per shift and batch, compute OEE and specific consumption, and score every asset for anomalies.',
+    specs: ['Shift, batch and day rollups', 'OEE and consumption per unit', 'Anomaly score and RUL per asset'],
   },
   {
     key: 'dashboards',
-    title: 'Dashboards and alerts',
-    body: 'Rank assets by risk and push alerts and work orders to the systems that act on them.',
-    specs: ['Asset health view', 'Power BI and Dataverse', 'SAP S/4HANA, Dynamics 365'],
+    title: 'Reports and alerts',
+    body: 'Production reports, utility use per batch and asset health, sent to the people and systems that act on them.',
+    specs: ['OEE, output and downtime reports', 'Energy and utilities per batch', 'Power BI, Dataverse, SAP'],
   },
 ] as const;
 
@@ -187,6 +223,18 @@ export const SPARKPLUG_PAYLOAD = `{
 
 export const CAPABILITIES = [
   {
+    key: 'production',
+    title: 'Production reporting',
+    body: 'Machine states, counts and stop reasons come straight from the PLC. OEE, output against plan and downtime by reason are calculated for every shift, batch and day, with no manual tally sheets.',
+    specs: ['OEE with availability, performance and quality', 'Downtime and micro stops ranked by lost time', 'Shift and batch reports, exported to Power BI'],
+  },
+  {
+    key: 'energy',
+    title: 'Energy and utility monitoring',
+    body: 'Electricity, steam, water and compressed air are metered on site and tied to the batch or shift that used them, so you see the cost of every unit produced and catch waste such as leaks or rinses that run too long.',
+    specs: ['kWh, steam, water and air per tonne or batch', 'Meters over Modbus TCP and RS-485', 'Alerts on idle and night time use'],
+  },
+  {
     key: 'pdm',
     title: 'Predictive maintenance',
     body: 'Vibration and current signatures are compared against each asset’s own baseline. When a pattern drifts, you see the likely fault and how many days of service remain, so the repair lands in a planned stop.',
@@ -213,24 +261,31 @@ export const CAPABILITIES = [
 ] as const;
 
 export const TAGLINE =
-  'Every motor, pump and gearbox on your line, measured continuously and ranked by how soon it needs attention.';
+  'Every unit produced, every kilowatt hour used and every machine at risk, measured live from the PLCs you already have.';
 
 // ---------- Use cases ----------
 
 export const USE_CASES = [
+  {
+    key: 'downtime',
+    tag: 'Packaging · bottling · process lines',
+    title: 'Production reports and OEE',
+    measure: 'Machine states, counts and stop reasons from existing PLC tags, plus current transformers and photo eyes where tags are missing.',
+    outcome: 'Automatic shift and batch reports with OEE, output against plan and every stop ranked by lost time, without changing validated PLC code.',
+  },
+  {
+    key: 'energy',
+    tag: 'Steam · power · water · compressed air',
+    title: 'Energy and utility consumption',
+    measure: 'Meters on boilers, compressors, switchboards and CIP skids, polled every second over Modbus.',
+    outcome: 'Use per batch, shift and tonne, a baseline for every utility, and alerts when idle or night time use climbs, such as air leaks or rinses that run too long.',
+  },
   {
     key: 'rotating',
     tag: 'Motors · pumps · fans · compressors',
     title: 'Rotating equipment health',
     measure: 'Triaxial vibration, motor current and bearing temperature, sampled continuously at the edge.',
     outcome: 'A fault type and the days of service left for each asset, so bearings and couplings are replaced in a scheduled stop instead of a breakdown.',
-  },
-  {
-    key: 'downtime',
-    tag: 'Packaging · bottling · conveyors',
-    title: 'Unplanned downtime and micro stops',
-    measure: 'Machine states from existing PLC tags, plus current transformers and photo eyes where tags are missing.',
-    outcome: 'Every stop logged with a reason and duration, ranked by lost production time, without changing validated PLC code.',
   },
   {
     key: 'workflows',
@@ -259,6 +314,10 @@ export const STEPS = [
 // ---------- FAQ ----------
 
 export const FAQ = [
+  {
+    q: 'Is Kalium only for predictive maintenance?',
+    a: 'No. The same Kit and the same data give you three things: production reports (OEE, output against plan, downtime and micro stops by reason), energy and utility use (electricity, steam, water and compressed air per shift, batch and tonne), and machine health with anomaly detection and remaining useful life. Most plants start with one and add the others on the same pipeline.',
+  },
   {
     q: 'Which controllers and protocols do you support?',
     a: 'Siemens S7, Rockwell ControlLogix and SLC over EtherNet/IP, Beckhoff over ADS, Modbus TCP and RTU, OPC UA, and MQTT Sparkplug B. If your plant runs something else, list it in the demo request and we will review it during the audit.',

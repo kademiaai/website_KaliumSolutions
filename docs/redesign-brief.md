@@ -37,13 +37,19 @@ the pipeline track becomes vertical cards.
 
 ## Hero copy
 
-- **Eyebrow:** IIoT condition monitoring and predictive maintenance
-- **Headline:** Find failing equipment / before it stops your line
-- **Subheadline:** Kalium reads vibration, current and temperature from the PLCs and sensors already on your floor,
-  flags anomalies at the edge, and estimates remaining useful life for every rotating asset.
+- **Eyebrow:** Industrial IoT for manufacturing plants
+- **Headline:** Output, energy / and machine health / for every line
+- **Subheadline:** Kalium reads the PLCs, meters and sensors already on your floor to produce automatic shift and batch
+  reports, energy and utility use per unit produced, and early warning of failing equipment. Data is processed at the
+  edge and stays in your plant.
 - **CTA:** Book a technical demo
 - **Risk line:** Starts with a scoped audit of one line. NDA signed before any plant data is shared.
 - **Proof line:** Reads from Siemens S7 · Rockwell EtherNet/IP · Beckhoff ADS · Modbus TCP · OPC UA · MQTT Sparkplug B
+- **Hero panel:** sample dashboard with three tabs: Production (OEE, output per shift, top stop reasons),
+  Consumption (utilities per 1,000 cases against baseline, night time air leak), Machine health (assets by RUL).
+
+Positioning: three outcomes from one Kit and one data pipeline: production reporting, energy and utility
+monitoring, and predictive maintenance. None is presented as the main product.
 
 ## Section headers
 

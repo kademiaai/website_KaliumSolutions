@@ -1,9 +1,9 @@
 import React from 'react';
-import { ClipboardTextIcon, GaugeIcon, PulseIcon } from '@phosphor-icons/react';
+import { ChartBarIcon, ClipboardTextIcon, GaugeIcon, LightningIcon } from '@phosphor-icons/react';
 import { STEPS, USE_CASES } from '../content';
 import { BounceIn, Container, Reveal, SectionHeader } from './ui';
 
-const icons = { rotating: GaugeIcon, downtime: PulseIcon, workflows: ClipboardTextIcon } as const;
+const icons = { downtime: ChartBarIcon, energy: LightningIcon, rotating: GaugeIcon, workflows: ClipboardTextIcon } as const;
 
 export const UseCases: React.FC = () => (
   <section id="use-cases" aria-labelledby="use-cases-heading" className="py-24">
@@ -13,11 +13,11 @@ export const UseCases: React.FC = () => (
           id="use-cases-heading"
           eyebrow="Use cases"
           title="Where plants start"
-          intro="The three problems we are most often asked to solve first."
+          intro="The problems plants most often ask us to solve first. All four run on the same Kit."
         />
       </Reveal>
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2">
         {USE_CASES.map((uc, i) => {
           const Icon = icons[uc.key];
           return (

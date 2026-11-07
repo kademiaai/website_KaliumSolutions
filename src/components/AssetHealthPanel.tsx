@@ -41,6 +41,7 @@ const TrendChart: React.FC<{ asset: Asset }> = ({ asset }) => {
   );
 };
 
+// Machine health view of the hero dashboard: assets ranked by remaining useful life.
 export const AssetHealthPanel: React.FC = () => {
   const [selectedId, setSelectedId] = useState(ASSETS[0].id);
   const selected = ASSETS.find((a) => a.id === selectedId) ?? ASSETS[0];
@@ -68,22 +69,11 @@ export const AssetHealthPanel: React.FC = () => {
 
   return (
     <div
-      className="overflow-hidden rounded-2xl border border-line bg-panel"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      {/* Window bar */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-4 py-3">
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 animate-blink rounded-full bg-ok motion-reduce:animate-none" aria-hidden="true" />
-          <span className="title-4 text-fg">Line 3 · Bottling hall</span>
-          <span className="caption-5 text-fg-faint">5 assets monitored</span>
-        </div>
-        <span className="rounded-md border border-line-strong px-2 py-0.5 caption-4 text-fg-muted">Sample data</span>
-      </div>
-
       <div className="grid lg:grid-cols-5">
         {/* Asset table */}
         <div className="lg:col-span-3">

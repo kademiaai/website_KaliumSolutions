@@ -58,7 +58,7 @@ export const Architecture: React.FC = () => (
         <SectionHeader
           id="architecture-heading"
           eyebrow="Architecture"
-          title="One pipeline from PLC tag to maintenance alert"
+          title="One pipeline from PLC tag to report and alert"
           intro="Every stage runs as a versioned container, configured from a Git repository your team can review."
         />
       </Reveal>

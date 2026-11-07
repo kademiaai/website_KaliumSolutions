@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { ArrowRightIcon, ShieldCheckIcon } from '@phosphor-icons/react';
 import { PROTOCOLS } from '../content';
-import { AssetHealthPanel } from './AssetHealthPanel';
+import { HeroDashboard } from './HeroDashboard';
 import { BASE_EASE, BounceIn, Container, Eyebrow, primaryButton } from './ui';
 
 export const Hero: React.FC = () => {
@@ -17,16 +17,18 @@ export const Hero: React.FC = () => {
     <section id="top" aria-labelledby="hero-heading" className="pt-24">
       <Container className="flex flex-col gap-12 pt-16">
         <motion.div {...rise(0)} className="flex flex-col gap-6">
-          <Eyebrow>IIoT condition monitoring and predictive maintenance</Eyebrow>
+          <Eyebrow>Industrial IoT for manufacturing plants</Eyebrow>
 
           <h1 id="hero-heading" className="heading-3 sm:heading-2 lg:heading-1 max-w-[680px] text-hero-gradient">
-            Find failing equipment <br className="hidden sm:block" />
-            before it stops your line
+            Output, energy <br className="hidden sm:block" />
+            and machine health <br className="hidden sm:block" />
+            for every line
           </h1>
 
           <p className="body-3 max-w-[680px] text-fg-muted">
-            Kalium reads vibration, current and temperature from the PLCs and sensors already on your floor, flags
-            anomalies at the edge, and estimates remaining useful life for every rotating asset.
+            Kalium reads the PLCs, meters and sensors already on your floor to produce automatic shift and batch reports,
+            energy and utility use per unit produced, and early warning of failing equipment. Data is processed at the
+            edge and stays in your plant.
           </p>
 
           <div className="flex flex-col gap-3">
@@ -67,7 +69,7 @@ export const Hero: React.FC = () => {
         </motion.div>
 
         <motion.div {...rise(0.2)}>
-          <AssetHealthPanel />
+          <HeroDashboard />
         </motion.div>
       </Container>
     </section>

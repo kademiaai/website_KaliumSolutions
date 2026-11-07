@@ -25,9 +25,9 @@ export default function App() {
       <main id="main">
         <Hero />
         <MotionBand
-          accent="Predictive"
-          title="maintenance"
-          caption="Vibration, current and temperature from every rotating asset, streamed continuously and scored against its own baseline."
+          accent="Live"
+          title="plant signals"
+          caption="Machine states, counts, meter readings and vibration, streamed every second from the PLCs and sensors you already have."
           scene="signals"
           sceneLabel="Animated vibration traces for five assets. Two show the repeating impulses of a bearing defect."
         />

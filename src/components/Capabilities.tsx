@@ -1,9 +1,11 @@
 import React from 'react';
-import { GaugeIcon, GitBranchIcon, PlugsConnectedIcon, StackIcon, CheckIcon } from '@phosphor-icons/react';
+import { ChartBarIcon, GaugeIcon, GitBranchIcon, LightningIcon, PlugsConnectedIcon, StackIcon, CheckIcon } from '@phosphor-icons/react';
 import { CAPABILITIES } from '../content';
 import { BounceIn, Container, Reveal, SectionHeader } from './ui';
 
 const icons = {
+  production: ChartBarIcon,
+  energy: LightningIcon,
   pdm: GaugeIcon,
   bridge: PlugsConnectedIcon,
   gitops: GitBranchIcon,
@@ -17,14 +19,14 @@ export const Capabilities: React.FC = () => (
         <SectionHeader
           id="capabilities-heading"
           eyebrow="Capabilities"
-          title="Four building blocks, deployed together or one at a time"
-          intro="Start with the module that solves today’s problem and add the rest on the same pipeline."
+          title="Six building blocks on one pipeline"
+          intro="Production reports, energy monitoring and predictive maintenance share the same Kit and the same data. Start with the one that solves today’s problem and add the rest later."
         />
       </Reveal>
 
       {/* Hairline grid: 1px gaps over a #272727 fill draw the dividers, so no card gets a one sided border. */}
       <Reveal>
-        <div className="grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-2">
+        <div className="grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-2 lg:grid-cols-3">
           {CAPABILITIES.map((cap, i) => {
             const Icon = icons[cap.key];
             return (

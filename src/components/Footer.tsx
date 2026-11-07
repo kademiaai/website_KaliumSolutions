@@ -13,7 +13,7 @@ export const Footer: React.FC = () => (
             <span className="title-3 text-fg">Kalium Solutions</span>
           </a>
           <p className="body-6 max-w-xs text-fg-muted">
-            Industrial IoT, condition monitoring and predictive maintenance for manufacturing plants.
+            Production reporting, energy monitoring and predictive maintenance for manufacturing plants.
           </p>
         </div>
 
